@@ -1,0 +1,96 @@
+<div class="crud-container">
+  <h2 class="crud-title">Gestión de Direcciones</h2>
+
+  <div class="form-card">
+    <h3 class="form-subtitle">Agregar Dirección</h3>
+    <div class="form-grid">
+      <select class="form-input" [(ngModel)]="nuevoClienteId">
+        <option value="0" disabled>Seleccionar cliente</option>
+        <option *ngFor="let c of clientes" [value]="c.id">
+          {{ c.nombre }} {{ c.apellido_paterno }}
+        </option>
+      </select>
+      <input type="text" class="form-input" placeholder="Nombre (ej: Casa, Trabajo)" [(ngModel)]="nuevoNombre" />
+      <input type="text" class="form-input" placeholder="Departamento" [(ngModel)]="nuevoDepartamento" />
+      <input type="text" class="form-input" placeholder="Ciudad" [(ngModel)]="nuevaCiudad" />
+      <input type="text" class="form-input" placeholder="Distrito" [(ngModel)]="nuevoDistrito" />
+      <input type="text" class="form-input" placeholder="Dirección" [(ngModel)]="nuevaDireccion" />
+      <input type="text" class="form-input" placeholder="Código postal" [(ngModel)]="nuevoCodigoPostal" />
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="nuevoEsPrincipal" />
+        Es dirección principal
+      </label>
+    </div>
+    <button class="btn btn-primary" (click)="registrar()">Agregar</button>
+  </div>
+ 
+  <!-- TABLA -->
+  <div class="table-wrapper">
+    <table class="crud-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Nombre</th>
+          <th>Departamento</th>
+          <th>Ciudad</th>
+          <th>Distrito</th>
+          <th>Dirección</th>
+          <th>Cód. Postal</th>
+          <th>Principal</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of lista">
+
+          <ng-container *ngIf="editandoId !== item.id">
+            <td>{{ item.id }}</td>
+            <td>{{ nombreCliente(item) }}</td>
+            <td>{{ item.nombre }}</td>
+            <td>{{ item.departamento }}</td>
+            <td>{{ item.ciudad }}</td>
+            <td>{{ item.distrito }}</td>
+            <td>{{ item.direccion }}</td>
+            <td>{{ item.codigo_postal || '—' }}</td>
+            <td>
+              <span class="badge" [class.badge-ok]="item.es_principal" [class.badge-no]="!item.es_principal">
+                {{ item.es_principal ? 'Sí' : 'No' }}
+              </span>
+            </td>
+            <td class="acciones">
+              <button class="btn btn-edit" (click)="iniciarEdicion(item)">Editar</button>
+              <button class="btn btn-delete" (click)="eliminar(item.id)">Eliminar</button>
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="editandoId === item.id">
+            <td>{{ item.id }}</td>
+            <td>
+              <select class="form-input-inline" [(ngModel)]="editandoClienteId">
+                <option *ngFor="let c of clientes" [value]="c.id">
+                  {{ c.nombre }} {{ c.apellido_paterno }}
+                </option>
+              </select>
+            </td>
+            <td><input type="text" class="form-input-inline" [(ngModel)]="editandoNombre" /></td>
+            <td><input type="text" class="form-input-inline" [(ngModel)]="editandoDepartamento" /></td>
+            <td><input type="text" class="form-input-inline" [(ngModel)]="editandoCiudad" /></td>
+            <td><input type="text" class="form-input-inline" [(ngModel)]="editandoDistrito" /></td>
+            <td><input type="text" class="form-input-inline" [(ngModel)]="editandoDireccion" /></td>
+            <td><input type="text" class="form-input-inline" [(ngModel)]="editandoCodigoPostal" /></td>
+            <td><input type="checkbox" [(ngModel)]="editandoEsPrincipal" /></td>
+            <td class="acciones">
+              <button class="btn btn-save" (click)="guardarEdicion()">Guardar</button>
+              <button class="btn btn-cancel" (click)="cancelarEdicion()">Cancelar</button>
+            </td>
+          </ng-container>
+ 
+        </tr>
+        <tr *ngIf="lista.length === 0">
+          <td colspan="10" class="empty-state">No hay direcciones registradas.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

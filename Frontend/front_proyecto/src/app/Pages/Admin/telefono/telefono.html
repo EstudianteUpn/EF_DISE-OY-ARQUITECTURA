@@ -1,0 +1,79 @@
+<div class="crud-container">
+  <h2 class="crud-title">Gestión de Teléfonos</h2>
+ 
+  <div class="form-card">
+    <h3 class="form-subtitle">Agregar Teléfono</h3>
+    <div class="form-grid">
+      <select class="form-input" [(ngModel)]="nuevoClienteId">
+        <option value="0" disabled>Seleccionar cliente</option>
+        <option *ngFor="let c of clientes" [value]="c.id">
+          {{ c.nombre }} {{ c.apellido_paterno }}
+        </option>
+      </select>
+      <input type="text" class="form-input" placeholder="Número" [(ngModel)]="nuevoNumero" maxlength="15" />
+      <select class="form-input" [(ngModel)]="nuevoTipo">
+        <option value="" disabled>Tipo de teléfono</option>
+        <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" (click)="registrar()">Agregar</button>
+  </div>
+ 
+  <div class="table-wrapper">
+    <table class="crud-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Número</th>
+          <th>Tipo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of lista">
+ 
+          <ng-container *ngIf="editandoId !== item.id">
+            <td>{{ item.id }}</td>
+            <td>{{ nombreCliente(item) }}</td>
+            <td>{{ item.numero }}</td>
+            <td>
+              <span class="badge">{{ item.tipo }}</span>
+            </td>
+            <td class="acciones">
+              <button class="btn btn-edit" (click)="iniciarEdicion(item)">Editar</button>
+              <button class="btn btn-delete" (click)="eliminar(item.id)">Eliminar</button>
+            </td>
+          </ng-container>
+ 
+          <ng-container *ngIf="editandoId === item.id">
+            <td>{{ item.id }}</td>
+            <td>
+              <select class="form-input-inline" [(ngModel)]="editandoClienteId">
+                <option *ngFor="let c of clientes" [value]="c.id">
+                  {{ c.nombre }} {{ c.apellido_paterno }}
+                </option>
+              </select>
+            </td>
+            <td>
+              <input type="text" class="form-input-inline" [(ngModel)]="editandoNumero" maxlength="15" />
+            </td>
+            <td>
+              <select class="form-input-inline" [(ngModel)]="editandoTipo">
+                <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+              </select>
+            </td>
+            <td class="acciones">
+              <button class="btn btn-save" (click)="guardarEdicion()">Guardar</button>
+              <button class="btn btn-cancel" (click)="cancelarEdicion()">Cancelar</button>
+            </td>
+          </ng-container>
+ 
+        </tr>
+        <tr *ngIf="lista.length === 0">
+          <td colspan="5" class="empty-state">No hay teléfonos registrados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

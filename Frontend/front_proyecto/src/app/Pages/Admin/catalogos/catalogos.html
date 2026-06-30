@@ -1,0 +1,49 @@
+<div class="catalogos-container">
+
+  <div class="tabs">
+    <button (click)="cargarCatalogo('roles')" [class.active]="catalogoActivo === 'roles'">Roles</button>
+    <button (click)="cargarCatalogo('estadosUsuario')" [class.active]="catalogoActivo === 'estadosUsuario'">Estado Usuario</button>
+    <button (click)="cargarCatalogo('estadosProducto')" [class.active]="catalogoActivo === 'estadosProducto'">Estado Producto</button>
+    <button (click)="cargarCatalogo('estadosPedido')" [class.active]="catalogoActivo === 'estadosPedido'">Estado Pedido</button>
+    <button (click)="cargarCatalogo('estadosPago')" [class.active]="catalogoActivo === 'estadosPago'">Estado Pago</button>
+    <button (click)="cargarCatalogo('estadosEntrega')" [class.active]="catalogoActivo === 'estadosEntrega'">Estado Entrega</button>
+    <button (click)="cargarCatalogo('tiposPago')" [class.active]="catalogoActivo === 'tiposPago'">Tipo Pago</button>
+    <button (click)="cargarCatalogo('tiposEntrega')" [class.active]="catalogoActivo === 'tiposEntrega'">Tipo Entrega</button>
+    <button (click)="cargarCatalogo('estadosConciliacion')" [class.active]="catalogoActivo === 'estadosConciliacion'">Estado Conciliacion</button>
+  </div>
+
+  <div class="form-nuevo">
+    <input type="text" [(ngModel)]="nuevoNombre" placeholder="Nuevo nombre" />
+    <button (click)="registrar()">Agregar</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of lista">
+        <td>{{ item.id }}</td>
+        <td>
+          <span *ngIf="editandoId !== item.id">{{ item.nombre }}</span>
+          <input *ngIf="editandoId === item.id" [(ngModel)]="editandoNombre" />
+        </td>
+        <td>
+          <ng-container *ngIf="editandoId !== item.id">
+            <button (click)="iniciarEdicion(item)">Editar</button>
+            <button (click)="eliminar(item.id)">Eliminar</button>
+          </ng-container>
+          <ng-container *ngIf="editandoId === item.id">
+            <button (click)="guardarEdicion()">Guardar</button>
+            <button (click)="cancelarEdicion()">Cancelar</button>
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

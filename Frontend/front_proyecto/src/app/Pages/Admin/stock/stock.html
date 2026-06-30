@@ -1,0 +1,89 @@
+<div class="crud-container">
+  <h2 class="crud-title">Gestión de Stock</h2>
+ 
+  <div class="form-card">
+    <h3 class="form-subtitle">Agregar Stock</h3>
+    <div class="form-grid">
+      <select class="form-input" [(ngModel)]="nuevoProductoId">
+        <option value="0" disabled>Seleccionar producto</option>
+        <option *ngFor="let p of productos" [value]="p.id">{{ p.nombre }}</option>
+      </select>
+      <input
+        type="number"
+        class="form-input"
+        placeholder="Cantidad"
+        [(ngModel)]="nuevaCantidad"
+        min="0"
+      />
+      <input
+        type="number"
+        class="form-input"
+        placeholder="Stock mínimo"
+        [(ngModel)]="nuevoStockMinimo"
+        min="0"
+      />
+    </div>
+    <button class="btn btn-primary" (click)="registrar()">Agregar</button>
+  </div>
+ 
+ 
+  <div class="table-wrapper">
+    <table class="crud-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Stock Mínimo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of lista" [class.fila-alerta]="stockBajo(item)">
+ 
+       
+          <ng-container *ngIf="editandoId !== item.id">
+            <td>{{ item.id }}</td>
+            <td>{{ item.producto?.nombre }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>{{ item.stock_minimo }}</td>
+            <td>
+              <span class="badge" [class.badge-alerta]="stockBajo(item)" [class.badge-ok]="!stockBajo(item)">
+                {{ stockBajo(item) ? 'Stock bajo' : 'OK' }}
+              </span>
+            </td>
+            <td class="acciones">
+              <button class="btn btn-edit" (click)="iniciarEdicion(item)">Editar</button>
+              <button class="btn btn-delete" (click)="eliminar(item.id)">Eliminar</button>
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="editandoId === item.id">
+            <td>{{ item.id }}</td>
+            <td>
+              <select class="form-input-inline" [(ngModel)]="editandoProductoId">
+                <option *ngFor="let p of productos" [value]="p.id">{{ p.nombre }}</option>
+              </select>
+            </td>
+            <td>
+              <input type="number" class="form-input-inline" [(ngModel)]="editandoCantidad" min="0" />
+            </td>
+            <td>
+              <input type="number" class="form-input-inline" [(ngModel)]="editandoStockMinimo" min="0" />
+            </td>
+            <td>—</td>
+            <td class="acciones">
+              <button class="btn btn-save" (click)="guardarEdicion()">Guardar</button>
+              <button class="btn btn-cancel" (click)="cancelarEdicion()">Cancelar</button>
+            </td>
+          </ng-container>
+ 
+        </tr>
+        <tr *ngIf="lista.length === 0">
+          <td colspan="6" class="empty-state">No hay registros de stock.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

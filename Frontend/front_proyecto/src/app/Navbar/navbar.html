@@ -1,0 +1,56 @@
+<header class="header-farma">
+  <!-- Barra superior -->
+  <div class="top-bar">
+    <div class="container-flex">
+      <div class="contacto">
+        <span>📞 314-0000</span>
+        <span>¡Compra segura las 24 horas!</span>
+      </div>
+      <div class="admin-link">
+        <a routerLink="/admin">👤 Portal Administrativo</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barra principal -->
+  <div class="main-bar">
+    <div class="container-flex">
+      <a routerLink="/inicio" class="logo-box">
+        <img src="img/inkafarma.png" alt="Inkafarma">
+      </a>
+
+      <div class="search-box">
+        <input type="text" placeholder="Buscar medicamentos, belleza, cuidado personal...">
+        <button class="btn-search">Buscar</button>
+      </div>
+
+      <a routerLink="/cart" class="cart-box">
+        <span class="icon">🛒</span>
+        <span class="text">Mi Carrito</span>
+        <span class="count">3</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Barra ubicación-->
+  <div class="location-bar">
+    <div class="container-flex">
+      <div class="location-content">
+        <span>📍</span>
+        <span>Entregar en:</span>
+        <select class="select-loc">
+          <option>Miraflores - Av. Larco</option>
+          <option>San Martín de Porres</option>
+          <option>San Isidro</option>
+          <option>Surco</option>
+        </select>
+      </div>
+      <div class="nav-links">
+        <a routerLink="/productos">Medicamentos</a>
+        <a routerLink="/productos">Vitaminas</a>
+        <a routerLink="/productos">Cuidado Personal</a>
+        <a routerLink="/productos">Ofertas</a>
+      </div>
+    </div>
+  </div>
+</header>

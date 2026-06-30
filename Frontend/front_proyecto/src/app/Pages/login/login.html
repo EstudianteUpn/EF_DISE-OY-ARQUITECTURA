@@ -1,0 +1,48 @@
+<div class="login-page">
+  <div class="grid-bg"></div>
+
+  <div class="login-card">
+    <span class="eyebrow">PAPELERÍA · EMPRESA COMERCIAL E INDUSTRIAL</span>
+    <h1 class="brand">Keycam</h1>
+
+    <div class="ruler" aria-hidden="true">
+      <span class="tick"></span>
+      <span class="tick"></span>
+      <span class="tick"></span>
+      <span class="tick"></span>
+      <span class="tick tick--major"></span>
+      <span class="tick"></span>
+      <span class="tick"></span>
+      <span class="tick"></span>
+      <span class="tick"></span>
+      <span class="tick tick--major"></span>
+    </div>
+
+    <p class="welcome">Inicia sesión para realizar tus pedidos</p>
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <label class="field">
+        <span class="field-label">Correo</span>
+        <input type="email" name="email" [(ngModel)]="email" placeholder="tucorreo@ejemplo.com" required />
+      </label>
+
+      <label class="field">
+        <span class="field-label">Contraseña</span>
+        <input type="password" name="password" [(ngModel)]="password" placeholder="••••••••" required />
+      </label>
+
+      <a class="forgot" routerLink="/recuperar">¿Olvidaste tu contraseña?</a>
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+
+      <button type="submit" class="submit-btn" [disabled]="cargando">
+        {{ cargando ? 'Ingresando...' : 'Iniciar sesión' }}
+      </button>
+    </form>
+
+    <p class="signup">
+      ¿No tienes cuenta?
+      <a routerLink="/registro">Crear cuenta</a>
+    </p>
+  </div>
+</div>

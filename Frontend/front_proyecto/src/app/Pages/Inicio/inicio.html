@@ -1,0 +1,131 @@
+<nav class="kb-nav">
+  <div class="kb-logo">
+    <span class="kb-logo-sub">Papelería · Empresa comercial e industrial</span>
+    <span class="kb-logo-name">Keycam</span>
+  </div>
+
+  <div class="kb-nav-links">
+    <a routerLink="/inicio" routerLinkActive="active">Inicio</a>
+    <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
+    <a routerLink="/ofertas" routerLinkActive="active">Ofertas</a>
+    <a routerLink="/nosotros" routerLinkActive="active">Nosotros</a>
+  </div>
+
+  <div class="kb-nav-right">
+    <div class="kb-cart-btn" routerLink="/carrito">
+      <i class="ti ti-shopping-cart" aria-hidden="true"></i>
+      <span class="kb-cart-badge">{{ cantidadCarrito() }}</span>
+    </div>
+    <a routerLink="/login" class="kb-login-btn">
+      <i class="ti ti-user" aria-hidden="true"></i>
+      Mi cuenta
+    </a>
+  </div>
+</nav>
+
+<section class="kb-hero">
+  <div class="kb-hero-text">
+    <span class="kb-hero-badge">✦ Nuevos productos disponibles</span>
+    <h1>Materiales creativos<br>para tu negocio y proyectos</h1>
+    <p>Cartulinas, viniles, papeles fotográficos, empaques y más.<br>Envíos a todo Lima.</p>
+    <a routerLink="/catalogo" class="kb-hero-btn">
+      Ver catálogo <i class="ti ti-arrow-right" aria-hidden="true"></i>
+    </a>
+  </div>
+
+  <div class="kb-hero-img">
+    <div class="kb-carousel">
+      <img
+        *ngFor="let img of imagenesCarrusel; let i = index"
+        [src]="img"
+        [class.active]="i === indiceActivo"
+        class="kb-carousel-img"
+        alt="Keycam" />
+      <div class="kb-carousel-dots">
+        <span
+          *ngFor="let img of imagenesCarrusel; let i = index"
+          class="kb-dot"
+          [class.active]="i === indiceActivo"
+          (click)="irAImagen(i)">
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="kb-cats-section">
+  <p class="kb-section-label">Categorías</p>
+  <div class="kb-cats-row">
+    <button
+      *ngFor="let cat of categorias"
+      class="kb-cat"
+      [class.active]="categoriaActiva === cat"
+      (click)="filtrarPorCategoria(cat)">
+      <i class="ti {{ getIconoCategoria(cat) }}" aria-hidden="true"></i>
+      {{ cat }}
+    </button>
+  </div>
+</section>
+
+<section class="kb-products-section">
+  <div class="kb-section-header">
+    <h2>Productos</h2>
+    <a routerLink="/catalogo">Ver todos <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+  </div>
+
+  <div *ngIf="cargando" class="kb-state-msg">
+    <i class="ti ti-loader-2 kb-spin" aria-hidden="true"></i>
+    <span>Cargando productos...</span>
+  </div>
+
+  <div *ngIf="!cargando && error" class="kb-state-msg kb-error">
+    <i class="ti ti-alert-circle" aria-hidden="true"></i>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="!cargando && !error && productosFiltrados.length === 0" class="kb-state-msg">
+    <i class="ti ti-package-off" aria-hidden="true"></i>
+    <span>Sin productos en esta categoría por ahora.</span>
+  </div>
+
+  <div *ngIf="!cargando && !error && productosFiltrados.length > 0" class="kb-products-grid">
+    <div class="kb-card" *ngFor="let producto of productosFiltrados">
+      <div class="kb-card-img">
+        <img
+          *ngIf="tieneImagen(producto)"
+          [src]="getImagenProducto(producto)"
+          [alt]="producto.nombre"
+          class="kb-card-photo" />
+        <i
+          *ngIf="!tieneImagen(producto)"
+          class="ti ti-photo-off"
+          aria-hidden="true"></i>
+      </div>
+      <div class="kb-card-body">
+        <p class="kb-card-name">{{ producto.nombre }}</p>
+        <p class="kb-card-desc">{{ producto.descripcion }}</p>
+        <div class="kb-card-row">
+          <span class="kb-card-price">S/ {{ producto.precio | number:'1.2-2' }}</span>
+          <span *ngIf="producto.descuento" class="kb-badge-off">-{{ producto.descuento }}%</span>
+        </div>
+        <button class="kb-add-btn" (click)="agregarAlCarrito(producto)">
+          <i class="ti ti-shopping-cart-plus" aria-hidden="true"></i>
+          Agregar
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="kb-promo">
+  <div class="kb-promo-text">
+    <p class="kb-promo-label">Oferta especial</p>
+    <h3>Descuentos en kits para negocios</h3>
+    <span>Empaques, viniles y papeles fotográficos · Solo clientes registrados</span>
+  </div>
+  <a routerLink="/ofertas" class="kb-promo-btn">Ver oferta</a>
+</section>
+
+<footer class="kb-footer">
+  <span>© 2026 Keycam · Papelería comercial e industrial</span>
+</footer>

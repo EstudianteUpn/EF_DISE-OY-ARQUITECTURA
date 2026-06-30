@@ -1,0 +1,13 @@
+<div class="resultado-container">
+  <div *ngIf="aprobado" class="resultado-exito">
+    <h2>✔ Pago aprobado</h2>
+    <p>Tu pedido #{{ pedidoId }} fue confirmado correctamente.</p>
+    <button (click)="irAInicio()">Volver al inicio</button>
+  </div>
+
+  <div *ngIf="!aprobado" class="resultado-error">
+    <h2>✕ Pago rechazado</h2>
+    <p>No se pudo procesar el pago de tu pedido #{{ pedidoId }}.</p>
+    <button (click)="reintentar()">Intentar de nuevo</button>
+  </div>
+</div>

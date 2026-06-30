@@ -1,0 +1,91 @@
+<div class="checkout-container">
+  <h2>Confirmar pedido</h2>
+
+  <div *ngIf="error" class="checkout-error">{{ error }}</div>
+
+  <div *ngIf="cliente" class="checkout-section">
+    <h3>Cliente</h3>
+    <p>{{ cliente.nombre }} {{ cliente.apellido_paterno }}</p>
+    <p>DNI: {{ cliente.dni }}</p>
+  </div>
+
+  <div class="checkout-section">
+    <h3>Tipo de entrega</h3>
+    <div class="checkout-entrega-opciones">
+      <button
+        *ngFor="let tipo of tiposEntrega"
+        [class.activo]="tipoEntregaId === tipo.id"
+        (click)="seleccionarTipoEntrega(tipo.id)">
+        {{ tipo.nombre }}
+      </button>
+    </div>
+  </div>
+
+  <div class="checkout-section">
+    <h3>Tipo de pago</h3>
+    <div class="checkout-entrega-opciones">
+      <button
+        *ngFor="let tipo of tiposPago"
+        [class.activo]="tipoPagoId === tipo.id"
+        (click)="seleccionarTipoPago(tipo.id)">
+        {{ tipo.nombre }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="esDelivery()" class="checkout-section">
+    <h3>Dirección de entrega</h3>
+
+    <div *ngIf="direccionesGuardadas.length > 0" class="checkout-direcciones">
+      <div
+        *ngFor="let dir of direccionesGuardadas"
+        class="checkout-direccion-item"
+        [class.seleccionada]="direccionSeleccionadaId === dir.id"
+        (click)="direccionSeleccionadaId = dir.id; mostrarFormDireccion = false">
+        <span class="dir-check">{{ direccionSeleccionadaId === dir.id ? '✔' : '○' }}</span>
+        <div class="dir-info">
+          <strong>{{ dir.nombre }}</strong>
+          <span>{{ dir.direccion }}, {{ dir.distrito }}, {{ dir.ciudad }}</span>
+          <span *ngIf="dir.es_principal" class="badge-principal">Principal</span>
+        </div>
+      </div>
+    </div>
+
+    <p *ngIf="direccionesGuardadas.length === 0">No tienes direcciones guardadas.</p>
+
+    <button class="btn-nueva-dir" (click)="toggleFormDireccion()">
+      {{ mostrarFormDireccion ? '✕ Cancelar' : '+ Nueva dirección' }}
+    </button>
+
+    <div *ngIf="mostrarFormDireccion" class="checkout-form-dir">
+      <input [(ngModel)]="nuevaDireccion.nombre" placeholder="Nombre de referencia (ej: Casa)" />
+      <input [(ngModel)]="nuevaDireccion.direccion" placeholder="Dirección" />
+      <input [(ngModel)]="nuevaDireccion.distrito" placeholder="Distrito" />
+      <input [(ngModel)]="nuevaDireccion.ciudad" placeholder="Ciudad" />
+      <input [(ngModel)]="nuevaDireccion.departamento" placeholder="Departamento" />
+      <input [(ngModel)]="nuevaDireccion.codigo_postal" placeholder="Código postal" />
+      <label>
+        <input type="checkbox" [(ngModel)]="nuevaDireccion.es_principal" />
+        Establecer como dirección principal
+      </label>
+      <button class="btn-guardar-dir" (click)="guardarNuevaDireccion()">Guardar dirección</button>
+    </div>
+  </div>
+
+  <div class="checkout-section">
+    <h3>Productos</h3>
+    <div class="checkout-item" *ngFor="let item of carrito()">
+      <span>{{ item.producto.nombre }}</span>
+      <span>{{ item.cantidad }} x S/ {{ item.producto.precio | number:'1.2-2' }}</span>
+      <span>S/ {{ item.producto.precio * item.cantidad | number:'1.2-2' }}</span>
+    </div>
+    <div class="checkout-total">
+      <strong>Total: S/ {{ total() | number:'1.2-2' }}</strong>
+    </div>
+  </div>
+
+  <button class="btn-confirmar" (click)="confirmarPedido()" [disabled]="procesando">
+    {{ procesando ? 'Procesando...' : 'Confirmar pedido' }}
+  </button>
+  <div *ngIf="mostrandoNiubiz" id="niubizFormContainer"></div>
+</div>

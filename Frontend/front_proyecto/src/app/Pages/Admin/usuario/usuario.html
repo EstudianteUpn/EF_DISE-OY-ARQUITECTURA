@@ -1,0 +1,242 @@
+<div class="ped-page">
+
+  <div class="ped-header">
+    <div>
+      <p class="ped-eyebrow">Administración</p>
+      <h1 class="ped-title">Gestión de usuarios</h1>
+    </div>
+  </div>
+
+  <div class="ped-tabs">
+    <button class="ped-tab" [class.ped-tab--active]="tabActivo() === 'usuarios'" (click)="cambiarTab('usuarios')">
+      <i class="ti ti-users"></i> Usuarios
+    </button>
+    <button class="ped-tab" [class.ped-tab--active]="tabActivo() === 'roles'" (click)="cambiarTab('roles')">
+      <i class="ti ti-shield"></i> Roles
+    </button>
+    <button class="ped-tab" [class.ped-tab--active]="tabActivo() === 'estados'" (click)="cambiarTab('estados')">
+      <i class="ti ti-tag"></i> Estados
+    </button>
+  </div>
+
+  <!-- ===================== TAB USUARIOS ===================== -->
+  <div *ngIf="tabActivo() === 'usuarios'" class="ped-panel">
+
+    <div class="ped-toolbar">
+      <div class="ped-search">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="Buscar por correo o cliente..." [(ngModel)]="busquedaUsuario" />
+      </div>
+      <select class="ped-input ped-input--filtro" [(ngModel)]="filtroRolId">
+        <option [value]="0">Todos los roles</option>
+        <option *ngFor="let r of roles" [value]="r.id">{{ r.nombre }}</option>
+      </select>
+    </div>
+
+    <div class="ped-table-wrap">
+      <table class="ped-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Fecha creación</th>
+            <th>Última modificación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of listaFiltrada">
+
+            <ng-container *ngIf="editandoId !== item.id">
+              <td class="ped-id">#{{ item.id }}</td>
+              <td>
+                <span class="ped-nombre">{{ item.email }}</span>
+                <span class="ped-desc">{{ item.cliente ? nombreCliente(item) : 'Sin cliente asociado' }}</span>
+              </td>
+              <td>{{ item.rol?.nombre }}</td>
+              <td>
+                <span class="ped-badge" [ngClass]="claseEstadoUsuario(item.estado?.nombre)">{{ item.estado?.nombre }}</span>
+              </td>
+              <td>{{ item.fecha_creacion | date:'dd/MM/yyyy' }}</td>
+              <td>{{ item.fecha_modificacion ? (item.fecha_modificacion | date:'dd/MM/yyyy') : '—' }}</td>
+              <td class="ped-actions">
+                <button class="ped-btn-icon ped-btn-icon--view" (click)="abrirVerUsuario(item)" title="Ver detalle">
+                  <i class="ti ti-eye"></i>
+                </button>
+                <button class="ped-btn-icon ped-btn-icon--edit" (click)="iniciarEdicion(item)" title="Editar">
+                  <i class="ti ti-pencil"></i>
+                </button>
+                <button class="ped-btn-icon ped-btn-icon--del" (click)="eliminar(item.id)" title="Eliminar">
+                  <i class="ti ti-trash"></i>
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container *ngIf="editandoId === item.id">
+              <td class="ped-id">#U-{{ item.id }}</td>
+              <td>
+                <input type="email" class="ped-input-inline" [(ngModel)]="editandoEmail" placeholder="Email" />
+              </td>
+              <td>
+                <select class="ped-input-inline" [(ngModel)]="editandoRolId">
+                  <option [value]="0" disabled>Seleccionar rol</option>
+                  <option *ngFor="let r of roles" [value]="r.id">{{ r.nombre }}</option>
+                </select>
+              </td>
+              <td>
+                <select class="ped-input-inline" [(ngModel)]="editandoEstadoId">
+                  <option [value]="0" disabled>Seleccionar estado</option>
+                  <option *ngFor="let e of estados" [value]="e.id">{{ e.nombre }}</option>
+                </select>
+              </td>
+              <td>{{ editandoFechaCreacion | date:'dd/MM/yyyy' }}</td>
+              <td>—</td>
+              <td class="ped-actions">
+                <button class="ped-btn-icon ped-btn-icon--save" (click)="guardarEdicion()" title="Guardar">
+                  <i class="ti ti-check"></i>
+                </button>
+                <button class="ped-btn-icon ped-btn-icon--cancel" (click)="cancelarEdicion()" title="Cancelar">
+                  <i class="ti ti-x"></i>
+                </button>
+              </td>
+            </ng-container>
+
+          </tr>
+          <tr *ngIf="listaFiltrada.length === 0">
+            <td colspan="7" class="ped-empty">
+              <i class="ti ti-user-off"></i>
+              <span>No hay usuarios registrados</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== TAB ROLES ===================== -->
+  <div *ngIf="tabActivo() === 'roles'" class="ped-panel">
+
+    <div class="ped-form-row">
+      <input class="ped-input" type="text" placeholder="Nombre del rol (ej: Soporte)" [(ngModel)]="nuevoRolNombre" />
+      <button class="ped-btn-save" (click)="registrarRol()">
+        <i class="ti ti-plus"></i> Agregar
+      </button>
+    </div>
+
+    <div class="ped-estados-grid">
+      <div *ngFor="let r of roles" class="ped-estado-card">
+        <ng-container *ngIf="editandoRolCatId !== r.id">
+          <div class="ped-estado-info">
+            <span class="ped-badge ped-badge--azul">{{ r.nombre }}</span>
+            <span class="ped-estado-id">ID {{ r.id }}</span>
+          </div>
+          <div class="ped-actions">
+            <button class="ped-btn-icon ped-btn-icon--edit" (click)="iniciarEdicionRol(r)"><i class="ti ti-pencil"></i></button>
+            <button class="ped-btn-icon ped-btn-icon--del" (click)="eliminarRol(r.id)"><i class="ti ti-trash"></i></button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="editandoRolCatId === r.id">
+          <input class="ped-input-inline" [(ngModel)]="editandoRolCatNombre" style="flex:1" />
+          <div class="ped-actions">
+            <button class="ped-btn-icon ped-btn-icon--save" (click)="guardarEdicionRol()"><i class="ti ti-check"></i></button>
+            <button class="ped-btn-icon ped-btn-icon--cancel" (click)="cancelarEdicionRol()"><i class="ti ti-x"></i></button>
+          </div>
+        </ng-container>
+      </div>
+      <div *ngIf="roles.length === 0" class="ped-empty">
+        <i class="ti ti-shield-off"></i><span>Sin roles registrados</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB ESTADOS ===================== -->
+  <div *ngIf="tabActivo() === 'estados'" class="ped-panel">
+
+    <div class="ped-form-row">
+      <input class="ped-input" type="text" placeholder="Nombre del estado (ej: Activo)" [(ngModel)]="nuevoEstadoNombre" />
+      <button class="ped-btn-save" (click)="registrarEstado()">
+        <i class="ti ti-plus"></i> Agregar
+      </button>
+    </div>
+
+    <div class="ped-estados-grid">
+      <div *ngFor="let e of estados" class="ped-estado-card">
+        <ng-container *ngIf="editandoEstId !== e.id">
+          <div class="ped-estado-info">
+            <span class="ped-badge" [ngClass]="claseEstadoBadge(e.nombre)">{{ e.nombre }}</span>
+            <span class="ped-estado-id">ID {{ e.id }}</span>
+          </div>
+          <div class="ped-actions">
+            <button class="ped-btn-icon ped-btn-icon--edit" (click)="iniciarEdicionEst(e)"><i class="ti ti-pencil"></i></button>
+            <button class="ped-btn-icon ped-btn-icon--del" (click)="eliminarEstado(e.id)"><i class="ti ti-trash"></i></button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="editandoEstId === e.id">
+          <input class="ped-input-inline" [(ngModel)]="editandoEstNombre" style="flex:1" />
+          <div class="ped-actions">
+            <button class="ped-btn-icon ped-btn-icon--save" (click)="guardarEdicionEst()"><i class="ti ti-check"></i></button>
+            <button class="ped-btn-icon ped-btn-icon--cancel" (click)="cancelarEdicionEst()"><i class="ti ti-x"></i></button>
+          </div>
+        </ng-container>
+      </div>
+      <div *ngIf="estados.length === 0" class="ped-empty">
+        <i class="ti ti-tag-off"></i><span>Sin estados registrados</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== MODAL VER USUARIO ===================== -->
+<div class="ped-modal-overlay" *ngIf="usuarioSeleccionado !== null" (click)="cerrarVerUsuario()">
+  <div class="ped-modal" (click)="$event.stopPropagation()">
+
+    <div class="ped-modal-header">
+      <h2>Detalle de usuario #U-{{ usuarioSeleccionado?.id }}</h2>
+      <button class="ped-modal-close" (click)="cerrarVerUsuario()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <div class="ped-modal-body" *ngIf="usuarioSeleccionado as item">
+
+      <div class="ped-modal-grid">
+        <div class="ped-field">
+          <label>Email</label>
+          <span>{{ item.email }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Cliente asociado</label>
+          <span>{{ item.cliente ? nombreCliente(item) : 'Sin cliente asociado' }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Rol</label>
+          <span>{{ item.rol?.nombre }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Estado</label>
+          <span class="ped-badge" [ngClass]="claseEstadoUsuario(item.estado?.nombre)">{{ item.estado?.nombre }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Fecha de creación</label>
+          <span>{{ item.fecha_creacion | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Última modificación</label>
+          <span>{{ item.fecha_modificacion ? (item.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : '—' }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="ped-modal-footer">
+      <button class="ped-btn-cancel" (click)="cerrarVerUsuario()">Cerrar</button>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Keycam Admin · Conciliaciones</title>
+<style>
+:root{
+  --green-dark:#1c4d39;
+  --green-darker:#163d2d;
+  --green-light:#e3f1e8;
+  --green-text:#1f7a4d;
+  --bg-page:#f6f5f1;
+  --bg-sidebar:#fafaf7;
+  --bg-card:#ffffff;
+  --border:#e6e3da;
+  --text-primary:#23261f;
+  --text-secondary:#73776c;
+  --amber-bg:#fdf1d8;
+  --amber-text:#8a5a06;
+  --red-bg:#fbe5e3;
+  --red-text:#9c2c24;
+  --blue-bg:#e2eefb;
+  --blue-text:#1d568f;
+  --gray-bg:#eeede7;
+  --gray-text:#5b5e54;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg-page);
+  color:var(--text-primary);
+  min-height:100vh;
+}
+.nav-icon{width:17px;height:17px;flex-shrink:0;display:inline-flex;}
+.nav-icon svg{width:100%;height:100%;display:block;}
+.main{flex:1;padding:30px 38px;min-width:0;}
+.eyebrow{font-size:12px;letter-spacing:.06em;color:var(--text-secondary);text-transform:uppercase;font-weight:600;margin-bottom:4px;}
+.page-title{font-size:26px;font-weight:600;margin:0 0 20px;}
+.tabs{display:flex;gap:22px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.tab{padding:0 0 11px;font-size:14px;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;}
+.tab.active{color:var(--green-dark);border-bottom-color:var(--green-dark);font-weight:600;}
+.toolbar{display:flex;gap:12px;margin-bottom:18px;align-items:center;}
+.search-box{
+  flex:1;display:flex;align-items:center;gap:8px;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:9px;padding:9px 14px;color:var(--text-secondary);font-size:14px;
+}
+.search-box svg{width:18px;height:18px;flex-shrink:0;display:block;}
+.search-box input{border:none;outline:none;background:transparent;font-size:14px;width:100%;color:var(--text-primary);}
+.filter-select{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:9px;
+  padding:9px 14px;font-size:14px;color:var(--text-primary);min-width:170px;
+}
+.btn-primary{
+  background:var(--green-dark);color:#fff;border:none;border-radius:9px;
+  padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;
+}
+.btn-primary .nav-icon{width:16px;height:16px;}
+.card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow:hidden;
+}
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+thead th{
+  text-align:left;font-size:11.5px;letter-spacing:.04em;color:var(--text-secondary);
+  text-transform:uppercase;font-weight:600;padding:13px 18px;border-bottom:1px solid var(--border);
+  background:#fbfbf9;
+}
+tbody td{padding:14px 18px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#fafaf7;}
+.cell-main{font-weight:600;color:var(--text-primary);}
+.cell-sub{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+.badge{
+  display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;
+  font-size:12.5px;font-weight:600;white-space:nowrap;
+}
+.badge-green{background:var(--green-light);color:var(--green-text);}
+.badge-amber{background:var(--amber-bg);color:var(--amber-text);}
+.badge-red{background:var(--red-bg);color:var(--red-text);}
+.badge-blue{background:var(--blue-bg);color:var(--blue-text);}
+.badge-gray{background:var(--gray-bg);color:var(--gray-text);}
+.actions{display:flex;gap:8px;}
+.icon-btn{
+  width:30px;height:30px;border-radius:7px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--bg-card);
+}
+.icon-btn svg{width:15px;height:15px;display:block;}
+.icon-btn.view{color:var(--blue-text);}
+.icon-btn.delete{color:var(--red-text);}
+.icon-btn.edit{color:var(--green-text);}
+.mono{font-family:'SF Mono',Consolas,monospace;font-size:12.5px;color:var(--text-secondary);}
+</style>
+</head>
+<body>
+<div class="main">
+  <div class="eyebrow">Finanzas</div>
+  <h1 class="page-title">Conciliaciones</h1>
+  <div class="tabs"><div class="tab active">Conciliaciones</div></div>
+  <div class="toolbar">
+    <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input type="text" placeholder="Buscar por movimiento o transacción..."></div>
+    <select class="filter-select"><option>Todos los estados</option></select>
+    <button class="btn-primary"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14"/><path d="M5 12h14"/></svg></span>Conciliar manualmente</button>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>ID</th><th>Mov. bancario</th><th>Transacción online</th><th>Monto</th><th>Fecha conciliación</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+        <tr>
+      <td><span class="mono">#C-501</span></td>
+      <td>#M-3301</td>
+      <td>#T-2201</td>
+      <td class="cell-main">S/ 247.50</td>
+      <td>20/06/2026 03:15</td>
+      <td><span class="badge badge-green">Conciliado</span></td>
+      <td><div class="actions"><div class="icon-btn view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="icon-btn delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></div></div></td>
+    </tr>
+<tr>
+      <td><span class="mono">#C-502</span></td>
+      <td>#M-3302</td>
+      <td>#T-2202</td>
+      <td class="cell-main">S/ 64.40</td>
+      <td>—</td>
+      <td><span class="badge badge-amber">Pendiente</span></td>
+      <td><div class="actions"><div class="icon-btn view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="icon-btn delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></div></div></td>
+    </tr>
+<tr>
+      <td><span class="mono">#C-503</span></td>
+      <td>#M-3303</td>
+      <td>#T-2203</td>
+      <td class="cell-main">S/ 126.70</td>
+      <td>—</td>
+      <td><span class="badge badge-red">Diferencia</span></td>
+      <td><div class="actions"><div class="icon-btn view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="icon-btn delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></div></div></td>
+    </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

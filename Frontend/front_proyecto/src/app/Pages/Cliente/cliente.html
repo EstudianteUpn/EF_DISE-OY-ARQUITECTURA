@@ -1,0 +1,190 @@
+<div class="cli-page">
+
+  <div class="cli-header">
+    <div>
+      <p class="cli-eyebrow">Operaciones</p>
+      <h1 class="cli-title">Clientes</h1>
+    </div>
+  </div>
+
+  <div class="cli-tabs">
+    <button class="cli-tab" [class.cli-tab--active]="tabActivo === 'clientes'" (click)="cambiarTab('clientes')">
+      <i class="ti ti-users"></i> Clientes
+    </button>
+    <button class="cli-tab" [class.cli-tab--active]="tabActivo === 'direcciones'" (click)="cambiarTab('direcciones')">
+      <i class="ti ti-map-pin"></i> Direcciones
+    </button>
+  </div>
+
+  <div *ngIf="tabActivo === 'clientes'" class="cli-panel">
+
+    <div class="cli-toolbar">
+      <div class="cli-search">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="Buscar por nombre, DNI o email..." [(ngModel)]="busquedaCliente" />
+      </div>
+    </div>
+
+    <div class="cli-table-wrap">
+      <table class="cli-table">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>DNI</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Fecha registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of clientesFiltrados">
+            <td>
+              <span class="cli-nombre">{{ c.nombre }} {{ c.apellido_paterno }} {{ c.apellido_materno }}</span>
+            </td>
+            <td>{{ c.dni }}</td>
+            <td>{{ c.email }}</td>
+            <td>
+              <ng-container *ngIf="telefonoDeCliente(c.id) as tel; else sinTel">
+                <span class="cli-tel">{{ tel.numero }}</span>
+                <span class="cli-tipo-badge">{{ tel.tipo }}</span>
+              </ng-container>
+              <ng-template #sinTel><span class="cli-muted">Sin teléfono</span></ng-template>
+            </td>
+            <td>{{ c.fecha_registro ? (c.fecha_registro | date:'dd/MM/yyyy HH:mm') : '—' }}</td>
+            <td class="cli-actions">
+              <button class="cli-btn-icon cli-btn-icon--edit" (click)="iniciarEdicionCliente(c)" title="Editar">
+                <i class="ti ti-pencil"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="clientesFiltrados.length === 0">
+            <td colspan="6" class="cli-empty">
+              <i class="ti ti-user-off"></i>
+              <span>No hay clientes registrados</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="tabActivo === 'direcciones'" class="cli-panel">
+
+    <div class="cli-table-wrap">
+      <table class="cli-table">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Nombre</th>
+            <th>Departamento</th>
+            <th>Ciudad</th>
+            <th>Distrito</th>
+            <th>Dirección</th>
+            <th>Cód. Postal</th>
+            <th>Principal</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of dirLista">
+
+            <ng-container *ngIf="dirEditandoId !== d.id">
+              <td>{{ nombreCliente(d) }}</td>
+              <td>{{ d.nombre }}</td>
+              <td>{{ d.departamento }}</td>
+              <td>{{ d.ciudad }}</td>
+              <td>{{ d.distrito }}</td>
+              <td>{{ d.direccion }}</td>
+              <td>{{ d.codigo_postal || '—' }}</td>
+              <td>
+                <span class="cli-badge" [class.cli-badge--activo]="d.es_principal" [class.cli-badge--inactivo]="!d.es_principal">
+                  {{ d.es_principal ? 'Sí' : 'No' }}
+                </span>
+              </td>
+              <td class="cli-actions">
+                <button class="cli-btn-icon cli-btn-icon--edit" (click)="iniciarEdicionDireccion(d)"><i class="ti ti-pencil"></i></button>
+                <button class="cli-btn-icon cli-btn-icon--del" (click)="eliminarDireccion(d.id)"><i class="ti ti-trash"></i></button>
+              </td>
+            </ng-container>
+
+            <ng-container *ngIf="dirEditandoId === d.id">
+              <td>
+                <select class="cli-input-inline" [(ngModel)]="dirEditandoClienteId">
+                  <option *ngFor="let c of listaClientes" [value]="c.id">{{ c.nombre }} {{ c.apellido_paterno }}</option>
+                </select>
+              </td>
+              <td><input class="cli-input-inline" [(ngModel)]="dirEditandoNombre" /></td>
+              <td><input class="cli-input-inline" [(ngModel)]="dirEditandoDepartamento" /></td>
+              <td><input class="cli-input-inline" [(ngModel)]="dirEditandoCiudad" /></td>
+              <td><input class="cli-input-inline" [(ngModel)]="dirEditandoDistrito" /></td>
+              <td><input class="cli-input-inline" [(ngModel)]="dirEditandoDireccion" /></td>
+              <td><input class="cli-input-inline" [(ngModel)]="dirEditandoCodigoPostal" /></td>
+              <td><input type="checkbox" [(ngModel)]="dirEditandoEsPrincipal" /></td>
+              <td class="cli-actions">
+                <button class="cli-btn-icon cli-btn-icon--save" (click)="guardarEdicionDireccion()"><i class="ti ti-check"></i></button>
+                <button class="cli-btn-icon cli-btn-icon--cancel" (click)="cancelarEdicionDireccion()"><i class="ti ti-x"></i></button>
+              </td>
+            </ng-container>
+
+          </tr>
+          <tr *ngIf="dirLista.length === 0">
+            <td colspan="9" class="cli-empty"><i class="ti ti-map-pin-off"></i><span>No hay direcciones registradas</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="cli-modal-overlay" *ngIf="modalClienteAbierto" (click)="cancelarEdicionCliente()">
+  <div class="cli-modal" (click)="$event.stopPropagation()">
+
+    <div class="cli-modal-header">
+      <h2>Editar cliente</h2>
+      <button class="cli-modal-close" (click)="cancelarEdicionCliente()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <div class="cli-modal-body">
+      <div class="cli-modal-grid">
+        <div class="cli-field">
+          <label>Nombre *</label>
+          <input class="cli-input" type="text" [(ngModel)]="editandoNombre" />
+        </div>
+        <div class="cli-field">
+          <label>Apellido paterno *</label>
+          <input class="cli-input" type="text" [(ngModel)]="editandoApellidoPaterno" />
+        </div>
+        <div class="cli-field">
+          <label>Apellido materno</label>
+          <input class="cli-input" type="text" [(ngModel)]="editandoApellidoMaterno" />
+        </div>
+        <div class="cli-field">
+          <label>DNI *</label>
+          <input class="cli-input" type="text" maxlength="8" [(ngModel)]="editandoDni" />
+        </div>
+        <div class="cli-field cli-field--full">
+          <label>Email *</label>
+          <input class="cli-input" type="email" [(ngModel)]="editandoEmail" />
+        </div>
+        <div class="cli-field">
+          <label>Teléfono * (9 dígitos)</label>
+          <input class="cli-input" type="text" maxlength="9" minlength="9" pattern="[0-9]{9}" [(ngModel)]="editandoTelefono" />
+        </div>
+        <div class="cli-field">
+          <label>Tipo de teléfono *</label>
+          <select class="cli-input" [(ngModel)]="editandoTipoTelefono">
+            <option value="Celular">Celular</option>
+            <option value="WhatsApp">WhatsApp</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="cli-modal-footer">
+      <button class="cli-btn-cancel" (click)="cancelarEdicionCliente()">Cancelar</button>
+      <button class="cli-btn-primary" (click)="guardarEdicionCliente()"><i class="ti ti-check"></i> Guardar cambios</button>
+    </div>
+
+  </div>
+</div>

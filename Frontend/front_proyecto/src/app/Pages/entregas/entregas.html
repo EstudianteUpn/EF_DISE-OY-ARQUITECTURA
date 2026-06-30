@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Keycam Admin · Entregas</title>
+<style>
+:root{
+  --green-dark:#1c4d39;
+  --green-darker:#163d2d;
+  --green-light:#e3f1e8;
+  --green-text:#1f7a4d;
+  --bg-page:#f6f5f1;
+  --bg-card:#ffffff;
+  --border:#e6e3da;
+  --text-primary:#23261f;
+  --text-secondary:#73776c;
+  --amber-bg:#fdf1d8;
+  --amber-text:#8a5a06;
+  --red-bg:#fbe5e3;
+  --red-text:#9c2c24;
+  --blue-bg:#e2eefb;
+  --blue-text:#1d568f;
+  --gray-bg:#eeede7;
+  --gray-text:#5b5e54;
+  --radius:14px;
+  --radius-sm:9px;
+
+  /* alias para mantener compatibilidad con las variables --kb-* originales */
+  --kb-text:var(--text-primary);
+  --kb-muted:var(--text-secondary);
+  --kb-border:var(--border);
+  --kb-bg:var(--bg-page);
+  --kb-green:var(--green-dark);
+  --kb-green-light:var(--green-darker);
+  --kb-radius:var(--radius);
+  --kb-radius-sm:var(--radius-sm);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg-page);
+  color:var(--text-primary);
+  min-height:100vh;
+}
+svg{display:block;}
+
+.ent-page { padding: 24px 28px; }
+.ent-header { margin-bottom: 18px; }
+.ent-eyebrow { font-size: 12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--kb-muted); margin:0 0 4px; }
+.ent-title { font-size: 24px; font-weight:700; color:var(--kb-text); margin:0; }
+
+.ent-tabs { display:flex; gap:6px; border-bottom:1px solid var(--kb-border); margin-bottom:18px; }
+.ent-tab { display:flex; align-items:center; gap:6px; padding:10px 14px; background:transparent; border:none; border-bottom:2px solid transparent; font-size:13px; font-weight:600; color:var(--kb-muted); cursor:pointer; }
+.ent-tab svg { width:15px; height:15px; flex-shrink:0; }
+.ent-tab--active { color: var(--kb-green); border-bottom-color: var(--kb-green); }
+
+.ent-panel { display:flex; flex-direction:column; gap:16px; }
+
+.ent-toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.ent-search { flex:1; min-width:220px; display:flex; align-items:center; gap:8px; border:1px solid var(--kb-border); border-radius:var(--kb-radius-sm); padding:9px 12px; background:#fff; }
+.ent-search svg { width:16px; height:16px; color:var(--kb-muted); flex-shrink:0; }
+.ent-search input { border:none; outline:none; background:transparent; font-size:13px; width:100%; color:var(--kb-text); }
+
+.ent-input { border:1px solid var(--kb-border); border-radius:var(--kb-radius-sm); padding:9px 12px; font-size:13px; background:#fff; color:var(--kb-text); }
+.ent-input--filtro { min-width:180px; }
+
+.ent-table-wrap { border:1px solid var(--kb-border); border-radius:var(--kb-radius); overflow-x:auto; }
+.ent-table { width:100%; border-collapse:collapse; font-size:13px; }
+.ent-table thead th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; font-weight:700; color:var(--kb-muted); padding:12px 16px; border-bottom:1px solid var(--kb-border); background:var(--kb-bg); white-space:nowrap; }
+.ent-table tbody td { padding:13px 16px; border-bottom:1px solid var(--kb-border); vertical-align:middle; color:var(--kb-text); }
+.ent-table tbody tr:last-child td { border-bottom:none; }
+.ent-table tbody tr:hover { background:#fafaf7; }
+.ent-id { font-family: monospace; color:var(--kb-muted); }
+.ent-nombre { display:block; font-weight:600; color:var(--kb-text); }
+.ent-desc { display:block; font-size:11.5px; color:var(--kb-muted); margin-top:2px; }
+.ent-precio { font-weight:700; }
+
+.ent-badge { display:inline-flex; align-items:center; padding:4px 11px; border-radius:20px; font-size:12px; font-weight:700; white-space:nowrap; }
+.ent-badge--green { background:#e3f1e8; color:#1f7a4d; }
+.ent-badge--amber { background:#fdf1d8; color:#8a5a06; }
+.ent-badge--red { background:#fbe5e3; color:#9c2c24; }
+.ent-badge--blue { background:#e2eefb; color:#1d568f; }
+.ent-badge--gray { background:#eeede7; color:#5b5e54; }
+
+.ent-select-inline { border:none; background:transparent; font-size:12px; font-weight:700; padding:4px 8px; border-radius:20px; cursor:pointer; }
+
+.ent-actions { display:flex; gap:6px; }
+.ent-btn-icon { width:30px; height:30px; border-radius:7px; border:1px solid var(--kb-border); display:flex; align-items:center; justify-content:center; cursor:pointer; background:#fff; color:var(--kb-muted); }
+.ent-btn-icon svg { width:15px; height:15px; }
+.ent-btn-icon--view:hover { color:#1d568f; border-color:#1d568f; }
+.ent-btn-icon--del:hover { color:#9c2c24; border-color:#9c2c24; }
+.ent-btn-icon--edit:hover { color: var(--kb-green); border-color: var(--kb-green); }
+.ent-btn-icon--save { color: var(--kb-green); border-color: var(--kb-green); }
+.ent-btn-icon--cancel:hover { color:#9c2c24; border-color:#9c2c24; }
+
+.ent-empty { display:flex; flex-direction:column; align-items:center; gap:8px; padding:36px 0; color:var(--kb-muted); font-size:13px; }
+.ent-empty svg { width:30px; height:30px; }
+
+.ent-form-row { display:flex; gap:10px; }
+.ent-btn-save { display:flex; align-items:center; gap:6px; padding:9px 18px; background:var(--kb-green); color:#fff; border:none; border-radius:var(--kb-radius-sm); font-size:13px; font-weight:600; cursor:pointer; }
+.ent-btn-save svg { width:15px; height:15px; }
+.ent-btn-save:hover { background: var(--kb-green-light); }
+
+.ent-estados-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:10px; }
+.ent-estado-card { display:flex; align-items:center; justify-content:space-between; gap:10px; border:1px solid var(--kb-border); border-radius:var(--kb-radius-sm); padding:12px; background:#fff; }
+.ent-estado-info { display:flex; flex-direction:column; gap:4px; }
+.ent-estado-id { font-size:11px; color:var(--kb-muted); }
+.ent-input-inline { border:1px solid var(--kb-border); border-radius:6px; padding:6px 8px; font-size:13px; }
+
+.ent-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:50; padding:20px; }
+.ent-modal { background:#fff; border-radius:var(--kb-radius); width:100%; max-width:620px; max-height:88vh; display:flex; flex-direction:column; overflow:hidden; }
+.ent-modal-header { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:1px solid var(--kb-border); }
+.ent-modal-header h2 { font-size:16px; font-weight:700; margin:0; color:var(--kb-text); }
+.ent-modal-close { width:28px; height:28px; border:none; background:transparent; color:var(--kb-muted); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.ent-modal-close svg { width:16px; height:16px; }
+.ent-modal-close:hover { color:var(--kb-text); }
+.ent-modal-body { padding:20px 24px; overflow-y:auto; flex:1; }
+.ent-modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:24px; }
+.ent-field { display:flex; flex-direction:column; gap:6px; }
+.ent-field label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--kb-muted); }
+.ent-field span { font-size:13px; color:var(--kb-text); }
+.ent-field input, .ent-field select { font-size:13px; color:var(--kb-text); border:1px solid var(--kb-border); border-radius:6px; padding:8px 10px; }
+.ent-items-section { border-top:1px solid var(--kb-border); padding-top:18px; }
+.ent-items-title { font-size:13px; font-weight:700; color:var(--kb-text); margin:0 0 12px; }
+.ent-items-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+.ent-items-table th { text-align:left; font-size:11px; text-transform:uppercase; color:var(--kb-muted); padding:8px; border-bottom:1px solid var(--kb-border); }
+.ent-items-table td { padding:9px 8px; border-bottom:1px solid var(--kb-border); }
+.ent-timeline { display:flex; flex-direction:column; gap:0; }
+.ent-timeline-item { display:flex; gap:12px; padding:0 0 16px; position:relative; }
+.ent-timeline-item:not(:last-child)::before { content:''; position:absolute; left:5px; top:14px; bottom:0; width:1px; background:var(--kb-border); }
+.ent-timeline-dot { width:11px; height:11px; border-radius:50%; background:var(--kb-green); margin-top:3px; flex-shrink:0; }
+.ent-timeline-content { display:flex; flex-direction:column; gap:2px; }
+.ent-timeline-date { font-size:11.5px; color:var(--kb-muted); }
+.ent-modal-footer { display:flex; justify-content:flex-end; gap:10px; padding:16px 24px 20px; border-top:1px solid var(--kb-border); }
+.ent-btn-cancel { padding:9px 18px; border:1px solid var(--kb-border); border-radius:var(--kb-radius-sm); background:transparent; color:var(--kb-muted); font-size:13px; font-weight:500; cursor:pointer; }
+.ent-btn-cancel:hover { background:var(--kb-bg); }
+.ent-btn-primary { display:flex; align-items:center; gap:6px; padding:9px 20px; background:var(--kb-green); color:#fff; border:none; border-radius:var(--kb-radius-sm); font-size:13px; font-weight:600; cursor:pointer; }
+.ent-btn-primary svg { width:15px; height:15px; }
+.ent-btn-primary:hover { background:var(--kb-green-light); }
+
+@media (max-width:680px) {
+  .ent-page { padding:16px; }
+  .ent-modal-grid { grid-template-columns:1fr; }
+  .ent-tabs { overflow-x:auto; }
+}
+</style>
+</head>
+<body>
+
+<div class="ent-page">
+
+  <div class="ent-header">
+    <p class="ent-eyebrow">Operaciones</p>
+    <h1 class="ent-title">Entregas</h1>
+  </div>
+
+  <div class="ent-tabs">
+    <button class="ent-tab ent-tab--active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="6" width="13" height="10" rx="1"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="6" cy="18.5" r="1.6"/><circle cx="17.5" cy="18.5" r="1.6"/></svg>
+      Entregas
+    </button>
+    <button class="ent-tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg>
+      Tipos de entrega
+    </button>
+    <button class="ent-tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 12.5l-8-8H4v8.5l8 8 8.5-8.5z"/><circle cx="8.5" cy="8.5" r="1.2"/></svg>
+      Estados
+    </button>
+  </div>
+
+  <div class="ent-panel">
+
+    <div class="ent-toolbar">
+      <div class="ent-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" placeholder="Buscar por ID, cliente o código de seguimiento...">
+      </div>
+      <select class="ent-input ent-input--filtro">
+        <option>Todos los tipos</option>
+        <option>Delivery propio</option>
+        <option>Empresa externa</option>
+        <option>Recojo en tienda</option>
+      </select>
+      <select class="ent-input ent-input--filtro">
+        <option>Todos los estados</option>
+        <option>Asignado</option>
+        <option>En camino</option>
+        <option>Entregado</option>
+        <option>Fallido</option>
+      </select>
+    </div>
+
+    <div class="ent-table-wrap">
+      <table class="ent-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Pedido</th>
+            <th>Cliente / dirección</th>
+            <th>Tipo de entrega</th>
+            <th>Código seguimiento</th>
+            <th>Fecha asignada</th>
+            <th>Fecha entrega</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ent-id">#1</td>
+            <td>#1</td>
+            <td>
+              <span class="ent-nombre">Keny Ricapa</span>
+              <span class="ent-desc">Av. Los Pinos 245, San Isidro</span>
+            </td>
+            <td>Delivery propio</td>
+            <td class="ent-id">SEG-88451</td>
+            <td>20/06/2026 02:10</td>
+            <td>20/06/2026 03:40</td>
+            <td>
+              <select class="ent-select-inline" style="background:#e3f1e8;color:#1f7a4d;">
+                <option selected>Entregado</option>
+                <option>Asignado</option>
+                <option>En camino</option>
+                <option>Fallido</option>
+              </select>
+            </td>
+            <td class="ent-actions">
+              <button class="ent-btn-icon ent-btn-icon--view" title="Ver detalle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+              <button class="ent-btn-icon ent-btn-icon--del" title="Eliminar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="ent-id">#2</td>
+            <td>#2</td>
+            <td>
+              <span class="ent-nombre">Pedro Ruiz</span>
+              <span class="ent-desc">Jr. Las Flores 102, Surco</span>
+            </td>
+            <td>
+              Empresa externa
+              <span class="ent-desc">Olva Courier</span>
+            </td>
+            <td class="ent-id">SEG-90012</td>
+            <td>20/06/2026 02:20</td>
+            <td>—</td>
+            <td>
+              <select class="ent-select-inline" style="background:#fdf1d8;color:#8a5a06;">
+                <option>Asignado</option>
+                <option selected>En camino</option>
+                <option>Entregado</option>
+                <option>Fallido</option>
+              </select>
+            </td>
+            <td class="ent-actions">
+              <button class="ent-btn-icon ent-btn-icon--view" title="Ver detalle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+              <button class="ent-btn-icon ent-btn-icon--del" title="Eliminar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="ent-id">#3</td>
+            <td>#4</td>
+            <td>
+              <span class="ent-nombre">PRUEBA PRUEBA</span>
+              <span class="ent-desc">Recojo en tienda</span>
+            </td>
+            <td>Recojo en tienda</td>
+            <td class="ent-id">—</td>
+            <td>20/06/2026 16:25</td>
+            <td>—</td>
+            <td>
+              <select class="ent-select-inline" style="background:#fbe5e3;color:#9c2c24;">
+                <option>Asignado</option>
+                <option>En camino</option>
+                <option>Entregado</option>
+                <option selected>Fallido</option>
+              </select>
+            </td>
+            <td class="ent-actions">
+              <button class="ent-btn-icon ent-btn-icon--view" title="Ver detalle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+              <button class="ent-btn-icon ent-btn-icon--del" title="Eliminar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

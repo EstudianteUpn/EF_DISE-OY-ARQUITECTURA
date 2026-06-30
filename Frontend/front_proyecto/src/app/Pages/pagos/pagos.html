@@ -1,0 +1,202 @@
+<div class="ped-page">
+
+  <div class="ped-header">
+    <div>
+      <p class="ped-eyebrow">Operaciones</p>
+      <h1 class="ped-title">Pagos</h1>
+    </div>
+  </div>
+
+  <div class="ped-tabs">
+    <button class="ped-tab" [class.ped-tab--active]="tabActivo() === 'pagos'" (click)="cambiarTab('pagos')">
+      <i class="ti ti-credit-card"></i> Pagos
+    </button>
+    <button class="ped-tab" [class.ped-tab--active]="tabActivo() === 'estados'" (click)="cambiarTab('estados')">
+      <i class="ti ti-tag"></i> Estados
+    </button>
+    <button class="ped-tab" [class.ped-tab--active]="tabActivo() === 'tipos'" (click)="cambiarTab('tipos')">
+      <i class="ti ti-category"></i> Tipo de pago
+    </button>
+  </div>
+
+  <!-- TAB: PAGOS (solo lectura) -->
+  <div *ngIf="tabActivo() === 'pagos'" class="ped-panel">
+
+    <div class="ped-toolbar">
+      <div class="ped-search">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="Buscar por ID, cliente o pedido..." [(ngModel)]="busquedaPago" />
+      </div>
+      <select class="ped-input ped-input--filtro" [(ngModel)]="filtroEstadoId">
+        <option [value]="0">Todos los estados</option>
+        <option *ngFor="let e of estadosPago" [value]="e.id">{{ e.nombre }}</option>
+      </select>
+    </div>
+
+    <div class="ped-table-wrap">
+      <table class="ped-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Pedido</th>
+            <th>Tipo de pago</th>
+            <th>Monto</th>
+            <th>Fecha de pago</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of pagosFiltrados">
+            <td class="ped-id">#{{ p.id }}</td>
+            <td>
+              <span class="ped-nombre">{{ p.pedido?.cliente?.nombre }} {{ p.pedido?.cliente?.apellido_paterno }}</span>
+              <span class="ped-desc">DNI {{ p.pedido?.cliente?.dni }}</span>
+            </td>
+            <td class="ped-id">#{{ p.pedido?.id }}</td>
+            <td>{{ p.tipo_pago?.nombre }}</td>
+            <td class="ped-precio">S/ {{ p.monto | number:'1.2-2' }}</td>
+            <td>{{ p.fecha_pago | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span class="ped-badge" [ngClass]="claseEstado(p.estado?.nombre)">{{ p.estado?.nombre }}</span>
+            </td>
+            <td class="ped-actions">
+              <button class="ped-btn-icon ped-btn-icon--view" (click)="abrirVerPago(p)" title="Ver detalle">
+                <i class="ti ti-eye"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="pagosFiltrados.length === 0">
+            <td colspan="8" class="ped-empty">
+              <i class="ti ti-credit-card-off"></i>
+              <span>No hay pagos registrados</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: ESTADOS (CRUD) -->
+  <div *ngIf="tabActivo() === 'estados'" class="ped-panel">
+
+    <div class="ped-form-row">
+      <input class="ped-input" type="text" placeholder="Nombre del estado (ej: Pagado)" [(ngModel)]="nuevoEstadoNombre" />
+      <button class="ped-btn-save" (click)="registrarEstado()">
+        <i class="ti ti-plus"></i> Agregar
+      </button>
+    </div>
+
+    <div class="ped-estados-grid">
+      <div *ngFor="let e of estadosPago" class="ped-estado-card">
+        <ng-container *ngIf="editandoEstId !== e.id">
+          <div class="ped-estado-info">
+            <span class="ped-badge" [ngClass]="claseEstado(e.nombre)">{{ e.nombre }}</span>
+            <span class="ped-estado-id">ID {{ e.id }}</span>
+          </div>
+          <div class="ped-actions">
+            <button class="ped-btn-icon ped-btn-icon--edit" (click)="iniciarEdicionEst(e)"><i class="ti ti-pencil"></i></button>
+            <button class="ped-btn-icon ped-btn-icon--del" (click)="eliminarEstado(e.id)"><i class="ti ti-trash"></i></button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="editandoEstId === e.id">
+          <input class="ped-input-inline" [(ngModel)]="editandoEstNombre" style="flex:1" />
+          <div class="ped-actions">
+            <button class="ped-btn-icon ped-btn-icon--save" (click)="guardarEdicionEst()"><i class="ti ti-check"></i></button>
+            <button class="ped-btn-icon ped-btn-icon--cancel" (click)="cancelarEdicionEst()"><i class="ti ti-x"></i></button>
+          </div>
+        </ng-container>
+      </div>
+      <div *ngIf="estadosPago.length === 0" class="ped-empty">
+        <i class="ti ti-tag-off"></i><span>Sin estados registrados</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: TIPO DE PAGO (CRUD) -->
+  <div *ngIf="tabActivo() === 'tipos'" class="ped-panel">
+
+    <div class="ped-form-row">
+      <input class="ped-input" type="text" placeholder="Nombre del tipo de pago (ej: Tarjeta)" [(ngModel)]="nuevoTipoNombre" />
+      <button class="ped-btn-save" (click)="registrarTipo()">
+        <i class="ti ti-plus"></i> Agregar
+      </button>
+    </div>
+
+    <div class="ped-estados-grid">
+      <div *ngFor="let t of tiposPago" class="ped-estado-card">
+        <ng-container *ngIf="editandoTipoId !== t.id">
+          <div class="ped-estado-info">
+            <span class="ped-badge ped-badge--azul">{{ t.nombre }}</span>
+            <span class="ped-estado-id">ID {{ t.id }}</span>
+          </div>
+          <div class="ped-actions">
+            <button class="ped-btn-icon ped-btn-icon--edit" (click)="iniciarEdicionTipo(t)"><i class="ti ti-pencil"></i></button>
+            <button class="ped-btn-icon ped-btn-icon--del" (click)="eliminarTipo(t.id)"><i class="ti ti-trash"></i></button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="editandoTipoId === t.id">
+          <input class="ped-input-inline" [(ngModel)]="editandoTipoNombre" style="flex:1" />
+          <div class="ped-actions">
+            <button class="ped-btn-icon ped-btn-icon--save" (click)="guardarEdicionTipo()"><i class="ti ti-check"></i></button>
+            <button class="ped-btn-icon ped-btn-icon--cancel" (click)="cancelarEdicionTipo()"><i class="ti ti-x"></i></button>
+          </div>
+        </ng-container>
+      </div>
+      <div *ngIf="tiposPago.length === 0" class="ped-empty">
+        <i class="ti ti-tag-off"></i><span>Sin tipos de pago registrados</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL: VER PAGO -->
+<div class="ped-modal-overlay" *ngIf="pagoSeleccionado !== null" (click)="cerrarModalPago()">
+  <div class="ped-modal" (click)="$event.stopPropagation()">
+
+    <div class="ped-modal-header">
+      <h2>Detalle del pago #{{ pagoSeleccionado?.id }}</h2>
+      <button class="ped-modal-close" (click)="cerrarModalPago()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <div class="ped-modal-body" *ngIf="pagoSeleccionado as p">
+      <div class="ped-modal-grid">
+        <div class="ped-field">
+          <label>Cliente</label>
+          <span>{{ p.pedido?.cliente?.nombre }} {{ p.pedido?.cliente?.apellido_paterno }}</span>
+        </div>
+        <div class="ped-field">
+          <label>DNI</label>
+          <span>{{ p.pedido?.cliente?.dni }}</span>
+        </div>
+        <div class="ped-field">
+          <label>Pedido asociado</label>
+          <span>#{{ p.pedido?.id }}</span>
+        </div>
+        <div class="ped-field">
+          <label>Tipo de pago</label>
+          <span>{{ p.tipo_pago?.nombre }}</span>
+        </div>
+        <div class="ped-field">
+          <label>Monto</label>
+          <span>S/ {{ p.monto | number:'1.2-2' }}</span>
+        </div>
+        <div class="ped-field">
+          <label>Fecha de pago</label>
+          <span>{{ p.fecha_pago | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="ped-field">
+          <label>Estado</label>
+          <span class="ped-badge" [ngClass]="claseEstado(p.estado?.nombre)">{{ p.estado?.nombre }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ped-modal-footer">
+      <button class="ped-btn-cancel" (click)="cerrarModalPago()">Cerrar</button>
+    </div>
+
+  </div>
+</div>

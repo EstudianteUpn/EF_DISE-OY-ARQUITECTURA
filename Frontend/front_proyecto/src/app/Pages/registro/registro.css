@@ -1,0 +1,243 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+ 
+:root {
+  --paper: #ffffff;
+  --ink: #1b1b1d;
+  --graphite: #6e6e73;
+  --line: #b4b4b4;
+  --accent: #2f5d50;
+}
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+body {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  background: var(--paper);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  overflow-x: hidden;
+}
+ 
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.45;
+  mask-image: radial-gradient(circle at 50% 40%, black 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+ 
+.register-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 40px 36px 36px;
+  box-shadow: 0 20px 40px -24px rgba(27, 27, 29, 0.18);
+}
+ 
+.eyebrow {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--graphite);
+  margin-bottom: 6px;
+}
+ 
+.brand {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 30px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+}
+ 
+.ruler {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 16px;
+  margin: 14px 0 22px;
+}
+ 
+.tick {
+  width: 1px;
+  height: 7px;
+  background: var(--line);
+}
+ 
+.tick--major {
+  height: 14px;
+  width: 1.5px;
+  background: var(--accent);
+}
+ 
+.welcome {
+  font-size: 14px;
+  color: var(--graphite);
+  margin: 0 0 26px;
+}
+ 
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+ 
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+ 
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+ 
+.field-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--graphite);
+}
+ 
+.field input {
+  border: none;
+  border-bottom: 1.5px solid var(--line);
+  background: transparent;
+  padding: 8px 2px;
+  font-size: 15px;
+  color: var(--ink);
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+ 
+.field input::placeholder {
+  color: #afada4;
+}
+ 
+.field input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+ 
+.field input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+ 
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 -4px;
+}
+ 
+.section-divider span {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b9b8b3;
+  white-space: nowrap;
+}
+ 
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+ 
+.submit-btn {
+  margin-top: 6px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2f5d50;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+ 
+.submit-btn:hover { background: #284f44; }
+.submit-btn:active { transform: translateY(1px); }
+.submit-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+ 
+.login-link {
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--graphite);
+  margin: 26px 0 0;
+}
+ 
+.login-link a {
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: none;
+}
+ 
+.login-link a:hover { text-decoration: underline; }
+ 
+@media (max-width: 480px) {
+  .register-card { padding: 32px 24px 28px; }
+  .field-row { grid-template-columns: 1fr; gap: 20px; }
+}
+ 
+@media (prefers-reduced-motion: reduce) {
+  .submit-btn { transition: none; }
+}
+
+.field select {
+  border: none;
+  border-bottom: 1.5px solid var(--line);
+  background: transparent;
+  padding: 8px 2px;
+  font-size: 15px;
+  color: var(--ink);
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+  width: 100%;
+  cursor: pointer;
+}
+
+.field select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.field select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

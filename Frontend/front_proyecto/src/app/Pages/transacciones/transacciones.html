@@ -1,0 +1,147 @@
+<div class="ped-page">
+
+  <div class="ped-header">
+    <div>
+      <p class="ped-eyebrow">Finanzas</p>
+      <h1 class="ped-title">Transacciones</h1>
+    </div>
+  </div>
+
+  <div class="ped-tabs">
+    <button class="ped-tab ped-tab--active">
+      <i class="ti ti-arrows-exchange"></i> Transacciones en línea
+    </button>
+  </div>
+
+  <div class="ped-panel">
+
+    <div class="ped-toolbar">
+      <div class="ped-search">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="Buscar por código, N° operación o pago..." [(ngModel)]="busquedaTransaccion" />
+      </div>
+      <select class="ped-input ped-input--filtro" [(ngModel)]="filtroEstadoTexto">
+        <option value="">Todos los estados</option>
+        <option *ngFor="let e of estadosDisponibles" [value]="e">{{ e }}</option>
+      </select>
+    </div>
+
+    <div class="ped-table-wrap">
+      <table class="ped-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Pago</th>
+            <th>Código transacción</th>
+            <th>Medio de pago</th>
+            <th>Moneda</th>
+            <th>Estado</th>
+            <th>Fecha transacción</th>
+            <th>Fecha abono</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of transaccionesFiltradas">
+            <td class="ped-id">#{{ t.id }}</td>
+            <td>#{{ t.pago?.id }}</td>
+            <td>{{ t.codigo_transaccion }}</td>
+            <td>{{ t.medio_pago }}</td>
+            <td>{{ t.moneda }}</td>
+            <td>
+              <span class="ped-badge" [ngClass]="claseEstado(t.estado_transaccion)">{{ t.estado_transaccion }}</span>
+            </td>
+            <td>{{ t.fecha_transaccion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ t.fecha_abono ? (t.fecha_abono | date:'dd/MM/yyyy HH:mm') : '—' }}</td>
+            <td class="ped-actions">
+              <button class="ped-btn-icon ped-btn-icon--view" (click)="abrirVerTransaccion(t)" title="Ver detalle">
+                <i class="ti ti-eye"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="transaccionesFiltradas.length === 0">
+            <td colspan="9" class="ped-empty">
+              <i class="ti ti-receipt-off"></i>
+              <span>No hay transacciones registradas</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="ped-modal-overlay" *ngIf="transaccionSeleccionada !== null" (click)="cerrarModalTransaccion()">
+  <div class="ped-modal" (click)="$event.stopPropagation()">
+
+    <div class="ped-modal-header">
+      <h2>Detalle de transacción #T-{{ transaccionSeleccionada?.id }}</h2>
+      <button class="ped-modal-close" (click)="cerrarModalTransaccion()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <div class="ped-modal-body" *ngIf="transaccionSeleccionada as t">
+
+      <div class="ped-modal-grid">
+        <div class="ped-field">
+          <label>Pago asociado</label>
+          <span>#{{ t.pago?.id }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Cliente</label>
+          <span *ngIf="t.pago?.pedido?.cliente">
+            {{ t.pago?.pedido?.cliente?.nombre }} {{ t.pago?.pedido?.cliente?.apellido_paterno }}
+          </span>
+          <span *ngIf="!t.pago?.pedido?.cliente">—</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Código de transacción</label>
+          <span>{{ t.codigo_transaccion }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>N° de operación</label>
+          <span>{{ t.numero_operacion }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Autorización</label>
+          <span>{{ t.autorizacion || '—' }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Medio de pago</label>
+          <span>{{ t.medio_pago }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Moneda</label>
+          <span>{{ t.moneda }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Estado</label>
+          <span class="ped-badge" [ngClass]="claseEstado(t.estado_transaccion)">{{ t.estado_transaccion }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Fecha de transacción</label>
+          <span>{{ t.fecha_transaccion | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+
+        <div class="ped-field">
+          <label>Fecha de abono</label>
+          <span>{{ t.fecha_abono ? (t.fecha_abono | date:'dd/MM/yyyy HH:mm') : '—' }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="ped-modal-footer">
+      <button class="ped-btn-cancel" (click)="cerrarModalTransaccion()">Cerrar</button>
+    </div>
+
+  </div>
+</div>

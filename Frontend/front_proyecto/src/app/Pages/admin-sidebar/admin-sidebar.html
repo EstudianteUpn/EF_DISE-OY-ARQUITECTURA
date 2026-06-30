@@ -1,0 +1,84 @@
+<div class="kb-admin-wrapper">
+
+  <aside class="kb-admin-sidebar">
+    <div class="kb-logo">
+      <div class="kb-logo-icon"><i class="ti ti-keyboard"></i></div>
+      <span class="kb-logo-name">Keycam Admin</span>
+    </div>
+
+    <nav class="kb-admin-nav">
+      <span class="kb-nav-section-label">MENÚ PRINCIPAL</span>
+      <a routerLink="/admin/dashboard" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-chart-pie"></i></span>
+        <span>📊Dashboard</span>
+      </a>
+      <a routerLink="/admin/productos" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-package"></i></span>
+        <span>🏷️Productos</span>
+      </a>
+      <a routerLink="/admin/categorias" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-category"></i></span>
+        <span>*********</span>
+      </a>
+      <a routerLink="/admin/pedidos" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-shopping-cart"></i></span>
+        <span>🛍️Pedidos</span>
+      </a>
+
+      <span class="kb-nav-section-label">OPERACIONES</span>
+      <a routerLink="/admin/clientes" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-users"></i></span>
+        <span>🙋Clientes</span>
+      </a>
+      <a routerLink="/admin/entregas" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-truck"></i></span>
+        <span>🚚Entregas</span>
+      </a>
+      <a routerLink="/admin/pagos" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-credit-card"></i></span>
+        <span>💵Pagos</span>
+      </a>
+
+      <span class="kb-nav-section-label">FINANZAS</span>
+      <a routerLink="/admin/transacciones" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-arrows-exchange"></i></span>
+        <span>💱Transacciones</span>
+        <span class="kb-nav-badge"></span>
+      </a>
+      <a routerLink="/admin/movimientos" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-building-bank"></i></span>
+        <span>💳Mov. Bancarios</span>
+        <span class="kb-nav-badge"></span>
+      </a>
+      <a routerLink="/admin/conciliaciones" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-file-check"></i></span>
+        <span>🏦Conciliaciones</span>
+        <span class="kb-nav-badge"></span>
+      </a>
+
+      <span class="kb-nav-section-label">ADMINISTRACIÓN</span>
+      <a routerLink="/admin/usuario" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-shield-lock"></i></span>
+        <span>👤Usuarios</span>
+      </a>
+    </nav>
+
+    <div class="kb-sidebar-footer">
+      <div class="kb-user-pill">
+        <div class="kb-user-avatar">{{ nombreUsuario()[0] }}</div>
+        <div class="kb-user-info">
+          <span class="kb-user-name">{{ nombreUsuario() }}</span>
+          <span class="kb-user-role">Admin</span>
+        </div>
+      </div>
+      <button class="kb-logout-btn" (click)="logout()">
+        <i class="ti ti-logout"></i>
+      </button>
+    </div>
+  </aside>
+
+  <main class="kb-admin-content">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

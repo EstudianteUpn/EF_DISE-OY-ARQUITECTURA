@@ -1,0 +1,112 @@
+<div class="dashboard-container">
+
+  <div class="dashboard-header">
+    <div>
+      <h1 class="dashboard-title">Panel de administración</h1>
+      <p class="dashboard-sub">Keycam · resumen de operaciones</p>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <span class="kpi-label">Ventas este mes</span>
+      <span class="kpi-value">S/ {{ totalVentasMes() | number:'1.2-2' }}</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Pedidos este mes</span>
+      <span class="kpi-value">{{ totalPedidosMes() }}</span>
+    </div>
+    <div class="kpi-card kpi-alert" [class.has-alert]="stockBajo().length > 0">
+      <span class="kpi-label">Productos con stock bajo</span>
+      <span class="kpi-value">{{ stockBajo().length }}</span>
+    </div>
+  </div>
+
+  <div class="charts-row">
+
+    <div class="chart-card chart-wide">
+      <div echarts [options]="graficaVentasMes()" class="chart-box"
+           (chartClick)="alClickVentasMes($event)">
+      </div>
+      <p class="chart-hint" *ngIf="!mostrarDetalle()">
+        Haz clic en una barra para ver el detalle del mes
+      </p>
+    </div>
+
+    <div class="chart-card">
+      <div echarts [options]="graficaProductos()" class="chart-box chart-box-horizontal">
+      </div>
+    </div>
+
+  </div>
+
+  <div class="detalle-section" *ngIf="mostrarDetalle()">
+    <div class="detalle-header">
+      <h2 class="detalle-title">Pedidos de {{ mesSeleccionado() }}</h2>
+      <button class="btn-cerrar" (click)="cerrarDetalle()">✕ Cerrar</button>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="detalle-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Tipo venta</th>
+            <th>Estado</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of pedidosDelMes()">
+            <td>{{ p.id }}</td>
+            <td>{{ p.fecha_creacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ p.cliente?.nombre }} {{ p.cliente?.apellido_paterno }}</td>
+            <td>{{ p.tipo_venta }}</td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + p.estado?.nombre?.toLowerCase()">
+                {{ p.estado?.nombre }}
+              </span>
+            </td>
+            <td class="td-total">S/ {{ p.total | number:'1.2-2' }}</td>
+          </tr>
+          <tr *ngIf="pedidosDelMes().length === 0">
+            <td colspan="6" class="td-empty">Sin pedidos en este mes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="stock-section" *ngIf="stockBajo().length > 0">
+    <h2 class="section-title">⚠ Productos con stock bajo o agotado</h2>
+    <div class="table-wrapper">
+      <table class="detalle-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Stock actual</th>
+            <th>Stock mínimo</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of stockBajo()">
+            <td>{{ s.producto?.nombre }}</td>
+            <td>{{ s.producto?.categoria?.nombre }}</td>
+            <td>{{ s.cantidad }}</td>
+            <td>{{ s.stock_minimo }}</td>
+            <td>
+              <span class="badge" [ngClass]="'badge-stock-' + getNivelStock(s)">
+                {{ getNivelStock(s) === 'agotado' ? 'Agotado' : 'Stock bajo' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

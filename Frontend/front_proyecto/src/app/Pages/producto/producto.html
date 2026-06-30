@@ -1,0 +1,354 @@
+<div class="prd-page">
+
+  <div class="prd-header">
+    <div>
+      <p class="prd-eyebrow">Inventario</p>
+      <h1 class="prd-title">Productos</h1>
+    </div>
+  </div>
+
+  <div class="prd-tabs">
+    <button class="prd-tab" [class.prd-tab--active]="tabActivo() === 'productos'" (click)="cambiarTab('productos')">
+      <i class="ti ti-package"></i> Productos
+    </button>
+    <button class="prd-tab" [class.prd-tab--active]="tabActivo() === 'categorias'" (click)="cambiarTab('categorias')">
+      <i class="ti ti-folder"></i> Categorías
+    </button>
+    <button class="prd-tab" [class.prd-tab--active]="tabActivo() === 'estados'" (click)="cambiarTab('estados')">
+      <i class="ti ti-tag"></i> Estados
+    </button>
+    <button class="prd-tab" [class.prd-tab--active]="tabActivo() === 'stock'" (click)="cambiarTab('stock')">
+      <i class="ti ti-stack"></i> Stock
+    </button>
+  </div>
+
+  <div *ngIf="tabActivo() === 'productos'" class="prd-panel">
+
+    <div class="prd-toolbar">
+      <div class="prd-search">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="Buscar producto..." [(ngModel)]="busquedaProducto" />
+      </div>
+      <button class="prd-btn-add" (click)="editandoProductoId = -1">
+        <i class="ti ti-plus"></i> Nuevo producto
+      </button>
+    </div>
+
+    <div class="prd-table-wrap">
+      <table class="prd-table">
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Dto.</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of productosFiltrados">
+            <td>
+              <img *ngIf="p.imagen_url" [src]="p.imagen_url" [alt]="p.nombre" class="prd-thumb" />
+              <div *ngIf="!p.imagen_url" class="prd-no-img"><i class="ti ti-photo-off"></i></div>
+            </td>
+            <td>
+              <span class="prd-nombre">{{ p.nombre }}</span>
+              <span class="prd-desc">{{ p.descripcion }}</span>
+            </td>
+            <td>{{ p.categoria?.nombre }}</td>
+            <td class="prd-precio">S/ {{ p.precio | number:'1.2-2' }}</td>
+            <td>{{ p.descuento }}%</td>
+            <td>
+              <span class="prd-badge" [class.prd-badge--activo]="p.estado?.nombre === 'Activo'"
+                                      [class.prd-badge--inactivo]="p.estado?.nombre !== 'Activo'">
+                {{ p.estado?.nombre }}
+              </span>
+            </td>
+            <td class="prd-actions">
+              <button class="prd-btn-icon prd-btn-icon--edit" (click)="iniciarEdicionProducto(p)" title="Editar">
+                <i class="ti ti-pencil"></i>
+              </button>
+              <button class="prd-btn-icon prd-btn-icon--del" (click)="eliminarProducto(p.id)" title="Eliminar">
+                <i class="ti ti-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="productosFiltrados.length === 0">
+            <td colspan="7" class="prd-empty">
+              <i class="ti ti-package-off"></i>
+              <span>No hay productos registrados</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="tabActivo() === 'categorias'" class="prd-panel">
+
+    <div class="prd-form-row">
+      <input class="prd-input" type="text" placeholder="Nombre de categoría" [(ngModel)]="nuevoCatNombre" />
+      <input class="prd-input" type="text" placeholder="Tipo general (ej: Papelería)" [(ngModel)]="nuevoCatTipo" />
+      <button class="prd-btn-save" (click)="registrarCategoria()">
+        <i class="ti ti-plus"></i> Agregar
+      </button>
+    </div>
+
+    <div class="prd-table-wrap">
+      <table class="prd-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Tipo General</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of listaCategorias">
+            <td class="prd-id">{{ c.id }}</td>
+
+            <ng-container *ngIf="editandoCatId !== c.id">
+              <td>{{ c.nombre }}</td>
+              <td><span class="prd-tipo-badge">{{ c.tipo_general }}</span></td>
+              <td class="prd-actions">
+                <button class="prd-btn-icon prd-btn-icon--edit" (click)="iniciarEdicionCat(c)"><i class="ti ti-pencil"></i></button>
+                <button class="prd-btn-icon prd-btn-icon--del" (click)="eliminarCategoria(c.id)"><i class="ti ti-trash"></i></button>
+              </td>
+            </ng-container>
+
+            <ng-container *ngIf="editandoCatId === c.id">
+              <td><input class="prd-input-inline" [(ngModel)]="editandoCatNombre" /></td>
+              <td><input class="prd-input-inline" [(ngModel)]="editandoCatTipo" /></td>
+              <td class="prd-actions">
+                <button class="prd-btn-icon prd-btn-icon--save" (click)="guardarEdicionCat()"><i class="ti ti-check"></i></button>
+                <button class="prd-btn-icon prd-btn-icon--cancel" (click)="cancelarEdicionCat()"><i class="ti ti-x"></i></button>
+              </td>
+            </ng-container>
+          </tr>
+          <tr *ngIf="listaCategorias.length === 0">
+            <td colspan="4" class="prd-empty"><i class="ti ti-folder-off"></i><span>Sin categorías</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="tabActivo() === 'estados'" class="prd-panel">
+
+    <div class="prd-form-row">
+      <input class="prd-input" type="text" placeholder="Nombre del estado (ej: Activo)" [(ngModel)]="nuevoEstadoNombre" />
+      <button class="prd-btn-save" (click)="registrarEstado()">
+        <i class="ti ti-plus"></i> Agregar
+      </button>
+    </div>
+
+    <div class="prd-estados-grid">
+      <div *ngFor="let e of listaEstados" class="prd-estado-card">
+        <ng-container *ngIf="editandoEstId !== e.id">
+          <div class="prd-estado-info">
+            <span class="prd-badge prd-badge--activo">{{ e.nombre }}</span>
+            <span class="prd-estado-id">ID {{ e.id }}</span>
+          </div>
+          <div class="prd-actions">
+            <button class="prd-btn-icon prd-btn-icon--edit" (click)="iniciarEdicionEst(e)"><i class="ti ti-pencil"></i></button>
+            <button class="prd-btn-icon prd-btn-icon--del" (click)="eliminarEstado(e.id)"><i class="ti ti-trash"></i></button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="editandoEstId === e.id">
+          <input class="prd-input-inline" [(ngModel)]="editandoEstNombre" style="flex:1" />
+          <div class="prd-actions">
+            <button class="prd-btn-icon prd-btn-icon--save" (click)="guardarEdicionEst()"><i class="ti ti-check"></i></button>
+            <button class="prd-btn-icon prd-btn-icon--cancel" (click)="cancelarEdicionEst()"><i class="ti ti-x"></i></button>
+          </div>
+        </ng-container>
+      </div>
+      <div *ngIf="listaEstados.length === 0" class="prd-empty">
+        <i class="ti ti-tag-off"></i><span>Sin estados registrados</span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="tabActivo() === 'stock'" class="prd-panel">
+
+    <div class="prd-toolbar">
+      <div class="prd-search">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="Buscar por producto..." [(ngModel)]="busquedaStock" />
+      </div>
+    </div>
+
+    <div class="prd-form-row prd-form-row--stock">
+      <select class="prd-input" [(ngModel)]="nuevoStockProductoId">
+        <option [value]="0" disabled>Seleccionar producto</option>
+        <option *ngFor="let p of productosParaStock" [value]="p.id">{{ p.nombre }}</option>
+      </select>
+      <input class="prd-input prd-input--num" type="number" placeholder="Cantidad" [(ngModel)]="nuevaCantidad" min="0" />
+      <input class="prd-input prd-input--num" type="number" placeholder="Stock mínimo" [(ngModel)]="nuevoStockMinimo" min="0" />
+      <button class="prd-btn-save" (click)="registrarStock()">
+        <i class="ti ti-plus"></i> Agregar
+      </button>
+    </div>
+
+    <div class="prd-table-wrap">
+      <table class="prd-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Mínimo</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of stockFiltrado" [class.prd-row--alerta]="nivelStock(s) !== 'ok'">
+
+            <ng-container *ngIf="editandoStockId !== s.id">
+              <td class="prd-nombre">{{ s.producto?.nombre }}</td>
+              <td>{{ s.cantidad }}</td>
+              <td>{{ s.stock_minimo }}</td>
+              <td>
+                <span class="prd-stock-badge"
+                  [class.prd-stock-badge--ok]="nivelStock(s) === 'ok'"
+                  [class.prd-stock-badge--bajo]="nivelStock(s) === 'bajo'"
+                  [class.prd-stock-badge--agotado]="nivelStock(s) === 'agotado'">
+                  {{ nivelStock(s) === 'ok' ? 'OK' : nivelStock(s) === 'bajo' ? 'Stock bajo' : 'Agotado' }}
+                </span>
+              </td>
+              <td class="prd-actions">
+                <button class="prd-btn-icon prd-btn-icon--edit" (click)="iniciarEdicionStock(s)"><i class="ti ti-pencil"></i></button>
+                <button class="prd-btn-icon prd-btn-icon--del" (click)="eliminarStock(s.id)"><i class="ti ti-trash"></i></button>
+              </td>
+            </ng-container>
+
+            <ng-container *ngIf="editandoStockId === s.id">
+              <td>
+                <select class="prd-input-inline" [(ngModel)]="editandoStockProductoId">
+                  <option *ngFor="let p of productosParaStock" [value]="p.id">{{ p.nombre }}</option>
+                </select>
+              </td>
+              <td><input class="prd-input-inline prd-input--num" type="number" [(ngModel)]="editandoCantidad" min="0" /></td>
+              <td><input class="prd-input-inline prd-input--num" type="number" [(ngModel)]="editandoStockMinimo" min="0" /></td>
+              <td>—</td>
+              <td class="prd-actions">
+                <button class="prd-btn-icon prd-btn-icon--save" (click)="guardarEdicionStock()"><i class="ti ti-check"></i></button>
+                <button class="prd-btn-icon prd-btn-icon--cancel" (click)="cancelarEdicionStock()"><i class="ti ti-x"></i></button>
+              </td>
+            </ng-container>
+
+          </tr>
+          <tr *ngIf="stockFiltrado.length === 0">
+            <td colspan="5" class="prd-empty"><i class="ti ti-stack-2"></i><span>Sin registros de stock</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="prd-modal-overlay" *ngIf="editandoProductoId !== null" (click)="cancelarEdicionProducto()">
+  <div class="prd-modal" (click)="$event.stopPropagation()">
+
+    <div class="prd-modal-header">
+      <h2>{{ editandoProductoId === -1 ? 'Nuevo producto' : 'Editar producto' }}</h2>
+      <button class="prd-modal-close" (click)="cancelarEdicionProducto()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <ng-container *ngIf="editandoProductoId === -1">
+      <div class="prd-modal-body">
+        <div class="prd-modal-grid">
+          <div class="prd-field prd-field--full">
+            <label>Nombre *</label>
+            <input class="prd-input" type="text" placeholder="Nombre del producto" [(ngModel)]="nuevoNombre" />
+          </div>
+          <div class="prd-field prd-field--full">
+            <label>Descripción</label>
+            <input class="prd-input" type="text" placeholder="Descripción breve" [(ngModel)]="nuevoDescripcion" />
+          </div>
+          <div class="prd-field">
+            <label>Precio (S/) *</label>
+            <input class="prd-input" type="number" placeholder="0.00" [(ngModel)]="nuevoPrecio" min="0" step="0.01" />
+          </div>
+          <div class="prd-field">
+            <label>Descuento (%)</label>
+            <input class="prd-input" type="number" placeholder="0" [(ngModel)]="nuevoDescuento" min="0" max="100" />
+          </div>
+          <div class="prd-field">
+            <label>Estado *</label>
+            <select class="prd-input" [(ngModel)]="nuevoEstadoId">
+              <option [value]="0" disabled>Seleccionar</option>
+              <option *ngFor="let e of estados" [value]="e.id">{{ e.nombre }}</option>
+            </select>
+          </div>
+          <div class="prd-field">
+            <label>Categoría *</label>
+            <select class="prd-input" [(ngModel)]="nuevoCategoriaId">
+              <option [value]="0" disabled>Seleccionar</option>
+              <option *ngFor="let c of categorias" [value]="c.id">{{ c.nombre }}</option>
+            </select>
+          </div>
+          <div class="prd-field prd-field--full">
+            <label>URL de imagen</label>
+            <input class="prd-input" type="text" placeholder="https://..." [(ngModel)]="nuevoImagenUrl" />
+            <img *ngIf="nuevoImagenUrl" [src]="nuevoImagenUrl" class="prd-img-preview" alt="preview" />
+          </div>
+        </div>
+      </div>
+      <div class="prd-modal-footer">
+        <button class="prd-btn-cancel" (click)="cancelarEdicionProducto()">Cancelar</button>
+        <button class="prd-btn-primary" (click)="registrarProducto()"><i class="ti ti-check"></i> Crear producto</button>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="editandoProductoId !== null && editandoProductoId !== -1">
+      <div class="prd-modal-body">
+        <div class="prd-modal-grid">
+          <div class="prd-field prd-field--full">
+            <label>Nombre *</label>
+            <input class="prd-input" type="text" [(ngModel)]="editandoNombre" />
+          </div>
+          <div class="prd-field prd-field--full">
+            <label>Descripción</label>
+            <input class="prd-input" type="text" [(ngModel)]="editandoDescripcion" />
+          </div>
+          <div class="prd-field">
+            <label>Precio (S/) *</label>
+            <input class="prd-input" type="number" [(ngModel)]="editandoPrecio" min="0" step="0.01" />
+          </div>
+          <div class="prd-field">
+            <label>Descuento (%)</label>
+            <input class="prd-input" type="number" [(ngModel)]="editandoDescuento" min="0" max="100" />
+          </div>
+          <div class="prd-field">
+            <label>Estado *</label>
+            <select class="prd-input" [(ngModel)]="editandoEstadoId">
+              <option [value]="0" disabled>Seleccionar</option>
+              <option *ngFor="let e of estados" [value]="e.id">{{ e.nombre }}</option>
+            </select>
+          </div>
+          <div class="prd-field">
+            <label>Categoría *</label>
+            <select class="prd-input" [(ngModel)]="editandoCategoriaId">
+              <option [value]="0" disabled>Seleccionar</option>
+              <option *ngFor="let c of categorias" [value]="c.id">{{ c.nombre }}</option>
+            </select>
+          </div>
+          <div class="prd-field prd-field--full">
+            <label>URL de imagen</label>
+            <input class="prd-input" type="text" [(ngModel)]="editandoImagenUrl" />
+            <img *ngIf="editandoImagenUrl" [src]="editandoImagenUrl" class="prd-img-preview" alt="preview" />
+          </div>
+        </div>
+      </div>
+      <div class="prd-modal-footer">
+        <button class="prd-btn-cancel" (click)="cancelarEdicionProducto()">Cancelar</button>
+        <button class="prd-btn-primary" (click)="guardarEdicionProducto()"><i class="ti ti-check"></i> Guardar cambios</button>
+      </div>
+    </ng-container>
+
+  </div>
+</div>

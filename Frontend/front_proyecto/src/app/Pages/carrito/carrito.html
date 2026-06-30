@@ -1,0 +1,52 @@
+<div class="cart-page">
+
+  <!-- Header -->
+  <div class="cart-header">
+    <p class="cart-eyebrow">TIENDA · KEYCAM</p>
+    <h1 class="cart-title">Tu carrito</h1>
+  </div>
+
+  <div *ngIf="carritoService.carrito().length === 0" class="cart-empty">
+    <i class="ti ti-shopping-cart-off"></i>
+    <span>No tienes productos en el carrito</span>
+    <a routerLink="/inicio" class="cart-btn-back">Ver productos</a>
+  </div>
+
+  <div *ngIf="carritoService.carrito().length > 0" class="cart-body">
+
+    <div class="cart-items">
+      <div class="cart-item" *ngFor="let item of carritoService.carrito()">
+        <div class="cart-item-info">
+          <span class="cart-item-nombre">{{ item.producto.nombre }}</span>
+          <span class="cart-item-precio">S/ {{ item.producto.precio | number:'1.2-2' }} c/u</span>
+        </div>
+        <div class="cart-item-controles">
+          <button class="cart-qty-btn" (click)="carritoService.cambiarCantidad(item.producto.id, item.cantidad - 1)">−</button>
+          <span class="cart-qty">{{ item.cantidad }}</span>
+          <button class="cart-qty-btn" (click)="carritoService.cambiarCantidad(item.producto.id, item.cantidad + 1)">+</button>
+        </div>
+        <span class="cart-item-subtotal">S/ {{ item.producto.precio * item.cantidad | number:'1.2-2' }}</span>
+        <button class="cart-btn-quitar" (click)="carritoService.quitar(item.producto.id)">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="cart-summary">
+      <div class="cart-summary-row">
+        <span>Subtotal</span>
+        <span>S/ {{ carritoService.total() | number:'1.2-2' }}</span>
+      </div>
+      <div class="cart-summary-row cart-summary-total">
+        <strong>Total</strong>
+        <strong>S/ {{ carritoService.total() | number:'1.2-2' }}</strong>
+      </div>
+      <button class="cart-btn-checkout" (click)="irACheckout()">
+        <i class="ti ti-credit-card"></i>
+        Proceder al pago
+      </button>
+      <a routerLink="/inicio" class="cart-link-back">← Seguir comprando</a>
+    </div>
+
+  </div>
+</div>

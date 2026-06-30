@@ -1,0 +1,43 @@
+<div>
+  <h2>Categorías de Producto</h2>
+
+  <div>
+    <input [(ngModel)]="nuevoNombre" placeholder="Nombre" />
+    <input [(ngModel)]="nuevoTipo" placeholder="Tipo general" />
+    <button (click)="registrar()">Agregar</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Tipo General</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of lista">
+        <td>{{ item.id }}</td>
+
+        <ng-container *ngIf="editandoId === item.id; else verModo">
+          <td><input [(ngModel)]="editandoNombre" /></td>
+          <td><input [(ngModel)]="editandoTipo" /></td>
+          <td>
+            <button (click)="guardarEdicion()">Guardar</button>
+            <button (click)="cancelarEdicion()">Cancelar</button>
+          </td>
+        </ng-container>
+
+        <ng-template #verModo>
+          <td>{{ item.nombre }}</td>
+          <td>{{ item.tipo_general }}</td>
+          <td>
+            <button (click)="iniciarEdicion(item)">Editar</button>
+            <button (click)="eliminar(item.id)">Eliminar</button>
+          </td>
+        </ng-template>
+      </tr>
+    </tbody>
+  </table>
+</div>

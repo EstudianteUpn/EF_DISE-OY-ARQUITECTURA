@@ -1,0 +1,92 @@
+<div class="kb-worker-wrapper">
+  <aside class="kb-admin-sidebar">
+    <div class="kb-logo">
+      <div class="kb-logo-icon">
+        <i class="ti ti-keyboard"></i>
+      </div>
+      <div class="kb-logo-texts">
+        <span class="kb-logo-name">Keycam</span>
+        <span class="kb-logo-sub">Panel Trabajador</span>
+      </div>
+    </div>
+
+    <nav class="kb-admin-nav">
+      <span class="kb-nav-section-label">MIS TAREAS</span>
+      <a routerLink="/trabajador/pedidos" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-clipboard-list"></i></span>
+        <span>Pedidos Asignados</span>
+      </a>
+      <a routerLink="/trabajador/entregas" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-truck"></i></span>
+        <span>Mis Entregas</span>
+      </a>
+
+      <span class="kb-nav-section-label">CONSULTAS</span>
+      <a routerLink="/trabajador/stock" routerLinkActive="kb-active">
+        <span class="kb-nav-icon"><i class="ti ti-package"></i></span>
+        <span>Stock</span>
+        <span class="kb-nav-badge">Solo lectura</span>
+      </a>
+    </nav>
+
+    <div class="kb-sidebar-footer">
+      <div class="kb-user-pill">
+        <div class="kb-user-avatar">T</div>
+        <div class="kb-user-info">
+          <span class="kb-user-name">Trabajador</span>
+          <span class="kb-user-role">Operario</span>
+        </div>
+        <button class="kb-logout-btn" title="Salir">
+          <i class="ti ti-logout"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="kb-admin-content">
+    <header class="kb-admin-header">
+      <div class="kb-header-title">
+        <span class="kb-header-eyebrow">Bienvenido de vuelta</span>
+        <h1>Panel de Operaciones</h1>
+      </div>
+    </header>
+
+    <section class="kb-stats-grid">
+      <div class="kb-stat-card kb-stat-card--warn">
+        <div class="kb-stat-icon-wrap"><i class="ti ti-clock"></i></div>
+        <span class="kb-stat-label">Pendientes de entrega</span>
+        <span class="kb-stat-value">12</span>
+      </div>
+      <div class="kb-stat-card">
+        <div class="kb-stat-icon-wrap"><i class="ti ti-alert-triangle"></i></div>
+        <span class="kb-stat-label">Stock bajo alerta</span>
+        <span class="kb-stat-value">3</span>
+      </div>
+    </section>
+
+    <section class="kb-data-table-container">
+      <div class="kb-table-header">
+        <h2>Últimos movimientos</h2>
+        <span class="kb-table-badge">Hoy</span>
+      </div>
+      <table class="kb-admin-table">
+        <thead>
+          <tr>
+            <th>ID Pedido</th>
+            <th>Cliente</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of tareas">
+            <td>{{ item.id }}</td>
+            <td>{{ item.cliente }}</td>
+            <td><span class="kb-badge-status">{{ item.estado }}</span></td>
+            <td><button class="kb-btn-small"><i class="ti ti-refresh"></i> Actualizar</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
